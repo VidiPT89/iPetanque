@@ -61,6 +61,7 @@ final class GameViewModel: ObservableObject {
     }
 
     private func prepareEnd(starter: Team, phase newPhase: GamePhase) {
+        scene?.clearBoard()
         balls = []
         cochonnet = nil
         ballsThrown = [.teamA: 0, .teamB: 0]

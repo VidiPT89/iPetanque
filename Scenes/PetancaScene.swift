@@ -105,6 +105,19 @@ final class PetancaScene: SKScene {
         cochonnetNode = nil
     }
 
+    /// Removes every thrown ball and the cochonnet, without touching the
+    /// static ground/court/circle layout. Must be called whenever the view
+    /// model starts a new end (`prepareEnd`) — otherwise every previous
+    /// end's boules stay on screen forever, piling up across the whole
+    /// match.
+    func clearBoard() {
+        for node in ballNodes.values {
+            node.removeFromParent()
+        }
+        ballNodes.removeAll()
+        removeCochonnet()
+    }
+
     // MARK: - Balls
 
     func addBallStart(id: UUID, team: Team) -> CGPoint {

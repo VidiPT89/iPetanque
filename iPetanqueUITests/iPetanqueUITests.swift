@@ -1,6 +1,6 @@
 import XCTest
 
-/// Drives the app through a real match to capture what the gameplay screen
+/// Drives the app through real matches to capture what the gameplay screen
 /// actually looks like — screenshots taken here are attached to the test
 /// result (`.keepAlways`) so they can be pulled out of the .xcresult bundle
 /// afterwards, since simulated taps via external tools (osascript/cliclick)
@@ -40,24 +40,45 @@ final class iPetanqueUITests: XCTestCase {
         attach(app, "05_throwCochonnet")
 
         // Drag from near the bottom of the field (the throwing circle) up
-        // toward the middle, as a human throw of the cochonnet would.
-        let start = field.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85))
-        let end = field.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.45))
-        start.press(forDuration: 0.1, thenDragTo: end)
+        // toward the middle, as a human throw would. Some of these will be
+        // no-ops if it's the AI's turn when they fire — that's fine, this
+        // is meant to exercise a whole match, not just one throw.
+        for i in 0..<14 {
+            let dx = 0.35 + Double(i % 3) * 0.15
+            let dy = 0.35 + Double((i * 7) % 4) * 0.1
+            let start = field.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85))
+            let end = field.coordinate(withNormalizedOffset: CGVector(dx: dx, dy: dy))
+            start.press(forDuration: 0.08, thenDragTo: end)
+            sleep(2)
+        }
 
-        sleep(2)
-        attach(app, "06_afterCochonnetThrow")
+        attach(app, "06_midMatch")
 
-        sleep(3)
-        attach(app, "07_afterFirstAITurnOrBall")
+        // Keep throwing (covering an end-of-end "Continue" tap if it shows
+        // up) until we either see the end-of-end summary or run out of
+        // patience — this is what actually exercises the board-clearing
+        // bug between ends, not just a single throw.
+        var sawEndOfEnd = false
+        for i in 0..<20 {
+            let continueButton = app.buttons.matching(NSPredicate(format: "label CONTAINS[c] 'Continuar' OR label CONTAINS[c] 'Continue'")).firstMatch
+            if continueButton.exists && continueButton.isHittable {
+                sawEndOfEnd = true
+                attach(app, "07_endOfEnd")
+                continueButton.tap()
+                sleep(1)
+                attach(app, "08_newEndBoardShouldBeEmpty")
+                break
+            }
+            let dx = 0.3 + Double(i % 4) * 0.15
+            let dy = 0.3 + Double((i * 5) % 5) * 0.09
+            let start = field.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85))
+            let end = field.coordinate(withNormalizedOffset: CGVector(dx: dx, dy: dy))
+            start.press(forDuration: 0.08, thenDragTo: end)
+            sleep(2)
+        }
 
-        // One more human throw attempt if it's still a throwing phase.
-        let start2 = field.coordinate(withNormalizedOffset: CGVector(dx: 0.45, dy: 0.85))
-        let end2 = field.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
-        start2.press(forDuration: 0.1, thenDragTo: end2)
-
-        sleep(3)
-        attach(app, "08_afterSecondThrow")
+        attach(app, "09_final")
+        XCTAssertTrue(sawEndOfEnd, "Never reached an end-of-end screen — cannot verify the board-clearing fix")
     }
 
     private func attach(_ app: XCUIApplication, _ name: String) {
