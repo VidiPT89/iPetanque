@@ -1,0 +1,588 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0338E4EAF540BD378B140943 /* CelebrationParticles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D09CC0EEC09507D534135CDD /* CelebrationParticles.swift */; };
+		2631DD6F1AC5E55317D7B62A /* PetancaScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C2B920072141CDF3A7859A8 /* PetancaScene.swift */; };
+		2A66535BD75625702C3314EF /* GameControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDE357217E84A4A0782A18C /* GameControlsView.swift */; };
+		304D22C022BB8B1AB7898924 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABDBA2DEAAD1497F30E07978 /* AboutView.swift */; };
+		312C5C1224A93EAA87D96D0D /* Team.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14D6119F530F475093D1C59 /* Team.swift */; };
+		3415228B132F74CA54226966 /* TopNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BDE0EA499B5E02E1002FB2D /* TopNavigationBar.swift */; };
+		35BD3C26B11A44FCE46103B7 /* MainMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFDD26AD25C9631ECB7241B2 /* MainMenuView.swift */; };
+		3E328284B3974CBDCAD6EC27 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81B7BBB29C07FC9B6B72DA87 /* SplashView.swift */; };
+		3EF768B33648E02267EEBF85 /* AIOpponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A44686E4ABCB1A3E5D5F6EDD /* AIOpponent.swift */; };
+		4ADF15636EB7478847061300 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 26E067040B2B9A065431588E /* Assets.xcassets */; };
+		51D6132239DE3422519A747D /* Ball.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81D501F62B07D89AAB5700C /* Ball.swift */; };
+		557EB4801F651E955A3E7A6C /* Cochonnet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A00FE4C848873D97EB57F7 /* Cochonnet.swift */; };
+		559732C2494A973EBAFB1B13 /* PetancaGameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848DA69DD95304C7D2449863 /* PetancaGameTests.swift */; };
+		8AE5E665E9DE0183D031A6D3 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3ED2EC5825E515E147FB0F9 /* RootView.swift */; };
+		95FFBC0FD03355EE5C56E8AB /* PetancaGameApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD33C5A65FDE454C3DA2107 /* PetancaGameApp.swift */; };
+		97926AF7DC6FF49BDD367918 /* MainMenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21CAB792F5BEC81D360C0A9A /* MainMenuButton.swift */; };
+		A28E6B6AD8BC55551FC800C6 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB6B4CD7BCA554950CA55F6 /* ThemeManager.swift */; };
+		ABE924E162839E85DF9B8938 /* NewGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F70B6830C5C51692B9B74AE /* NewGameView.swift */; };
+		B744ED67DDCEC90DC83441B4 /* TurnIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F28368D31B82CC5759A9CA7 /* TurnIndicatorView.swift */; };
+		CE0AFCBF4953006173C1526E /* GameMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709DEBF5AF28C4CE8DB4CBC5 /* GameMode.swift */; };
+		DD3DCBA836C24E81ECEA0F60 /* LanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BFCCC639B2AA0FF8DC4C57 /* LanguageManager.swift */; };
+		E2E0BE798CD0B2628E4ED4DF /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A2E67346FF6994D89CC13DE /* L10n.swift */; };
+		E84D0172B9D8CCDCA1F097E1 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A735AB1381194034398A874 /* GameView.swift */; };
+		E8FA1AAF21724F6024AFF6F6 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC5AAFCF6A6CEF8B383F94A3 /* SettingsView.swift */; };
+		EE3C0F5A6D048CE2E3352A91 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C6BCE4653FA87D0469F699 /* SoundManager.swift */; };
+		F23CB93652ED0C1B30E09CA2 /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6C484FC8F763C0A8E614AA /* GameViewModel.swift */; };
+		FAE665D01AE20B03A0FE1B4E /* PetancaFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E92758110539B8A4C0D1B7E /* PetancaFieldView.swift */; };
+		FEE5F6D4F8CC25777F9032A3 /* ScoreBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE3ABEC6A49A46236954E0AE /* ScoreBoardView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		61F34FADCB1C363E69FF59CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 378D3AA3C73347C83725F4C5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 222B6178FA4A6142A2A73036;
+			remoteInfo = PetancaGame;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		09C6BCE4653FA87D0469F699 /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
+		1C2B920072141CDF3A7859A8 /* PetancaScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetancaScene.swift; sourceTree = "<group>"; };
+		21CAB792F5BEC81D360C0A9A /* MainMenuButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuButton.swift; sourceTree = "<group>"; };
+		26E067040B2B9A065431588E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2F28368D31B82CC5759A9CA7 /* TurnIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TurnIndicatorView.swift; sourceTree = "<group>"; };
+		3DD33C5A65FDE454C3DA2107 /* PetancaGameApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetancaGameApp.swift; sourceTree = "<group>"; };
+		3F70B6830C5C51692B9B74AE /* NewGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGameView.swift; sourceTree = "<group>"; };
+		4A735AB1381194034398A874 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
+		4E37D70A8D9565BC876EF70F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		59D84FB0DE255CC3404F5E95 /* PetancaGame.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PetancaGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5A2E67346FF6994D89CC13DE /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
+		6BDE0EA499B5E02E1002FB2D /* TopNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopNavigationBar.swift; sourceTree = "<group>"; };
+		709DEBF5AF28C4CE8DB4CBC5 /* GameMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameMode.swift; sourceTree = "<group>"; };
+		7E92758110539B8A4C0D1B7E /* PetancaFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetancaFieldView.swift; sourceTree = "<group>"; };
+		81B7BBB29C07FC9B6B72DA87 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
+		848DA69DD95304C7D2449863 /* PetancaGameTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetancaGameTests.swift; sourceTree = "<group>"; };
+		92BFCCC639B2AA0FF8DC4C57 /* LanguageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageManager.swift; sourceTree = "<group>"; };
+		9DB6B4CD7BCA554950CA55F6 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
+		A44686E4ABCB1A3E5D5F6EDD /* AIOpponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIOpponent.swift; sourceTree = "<group>"; };
+		AAF429DF4523E6BC25B0F45F /* PetancaGameTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PetancaGameTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		ABDBA2DEAAD1497F30E07978 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		AE3ABEC6A49A46236954E0AE /* ScoreBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreBoardView.swift; sourceTree = "<group>"; };
+		B4A00FE4C848873D97EB57F7 /* Cochonnet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cochonnet.swift; sourceTree = "<group>"; };
+		BDDE357217E84A4A0782A18C /* GameControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameControlsView.swift; sourceTree = "<group>"; };
+		C14D6119F530F475093D1C59 /* Team.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Team.swift; sourceTree = "<group>"; };
+		CF6C484FC8F763C0A8E614AA /* GameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewModel.swift; sourceTree = "<group>"; };
+		D09CC0EEC09507D534135CDD /* CelebrationParticles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelebrationParticles.swift; sourceTree = "<group>"; };
+		D81D501F62B07D89AAB5700C /* Ball.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ball.swift; sourceTree = "<group>"; };
+		E3ED2EC5825E515E147FB0F9 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		FC5AAFCF6A6CEF8B383F94A3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		FFDD26AD25C9631ECB7241B2 /* MainMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		154943D189BB4880C8D22397 /* Physics */ = {
+			isa = PBXGroup;
+			children = (
+				A44686E4ABCB1A3E5D5F6EDD /* AIOpponent.swift */,
+			);
+			path = Physics;
+			sourceTree = "<group>";
+		};
+		1975BC6D60BBE5EA1AEECAE1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				59D84FB0DE255CC3404F5E95 /* PetancaGame.app */,
+				AAF429DF4523E6BC25B0F45F /* PetancaGameTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1D1A936269E571D55B25041E /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				ABDBA2DEAAD1497F30E07978 /* AboutView.swift */,
+				4A735AB1381194034398A874 /* GameView.swift */,
+				FFDD26AD25C9631ECB7241B2 /* MainMenuView.swift */,
+				3F70B6830C5C51692B9B74AE /* NewGameView.swift */,
+				E3ED2EC5825E515E147FB0F9 /* RootView.swift */,
+				FC5AAFCF6A6CEF8B383F94A3 /* SettingsView.swift */,
+				81B7BBB29C07FC9B6B72DA87 /* SplashView.swift */,
+				B783EF46FD560D656F94846C /* Components */,
+				FF5724458730769C863F031D /* Sprites */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		48118EFB0DAC7F101AFCC0C5 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				D81D501F62B07D89AAB5700C /* Ball.swift */,
+				B4A00FE4C848873D97EB57F7 /* Cochonnet.swift */,
+				709DEBF5AF28C4CE8DB4CBC5 /* GameMode.swift */,
+				C14D6119F530F475093D1C59 /* Team.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		651D9E3AA048464DC5E2F5B4 /* PetancaGame */ = {
+			isa = PBXGroup;
+			children = (
+				4E37D70A8D9565BC876EF70F /* Info.plist */,
+				3DD33C5A65FDE454C3DA2107 /* PetancaGameApp.swift */,
+				A98E6EB35F5064B3E6CE6503 /* Localization */,
+				6BBA5CBCEEDCB019BED10712 /* Managers */,
+				48118EFB0DAC7F101AFCC0C5 /* Models */,
+				154943D189BB4880C8D22397 /* Physics */,
+				8D9AE2C6C438AFC98FA90C16 /* Resources */,
+				7CBE3652B63041ED1C766DE9 /* Scenes */,
+				D072B394F37E4C04AA1DFB86 /* ViewModels */,
+				1D1A936269E571D55B25041E /* Views */,
+			);
+			path = PetancaGame;
+			sourceTree = "<group>";
+		};
+		6BBA5CBCEEDCB019BED10712 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				92BFCCC639B2AA0FF8DC4C57 /* LanguageManager.swift */,
+				09C6BCE4653FA87D0469F699 /* SoundManager.swift */,
+				9DB6B4CD7BCA554950CA55F6 /* ThemeManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		7CBE3652B63041ED1C766DE9 /* Scenes */ = {
+			isa = PBXGroup;
+			children = (
+				1C2B920072141CDF3A7859A8 /* PetancaScene.swift */,
+			);
+			path = Scenes;
+			sourceTree = "<group>";
+		};
+		8D9AE2C6C438AFC98FA90C16 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				26E067040B2B9A065431588E /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		A108FEECD88C859960FD9133 /* PetancaGameTests */ = {
+			isa = PBXGroup;
+			children = (
+				848DA69DD95304C7D2449863 /* PetancaGameTests.swift */,
+			);
+			path = PetancaGameTests;
+			sourceTree = "<group>";
+		};
+		A98E6EB35F5064B3E6CE6503 /* Localization */ = {
+			isa = PBXGroup;
+			children = (
+				5A2E67346FF6994D89CC13DE /* L10n.swift */,
+			);
+			path = Localization;
+			sourceTree = "<group>";
+		};
+		B783EF46FD560D656F94846C /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				D09CC0EEC09507D534135CDD /* CelebrationParticles.swift */,
+				BDDE357217E84A4A0782A18C /* GameControlsView.swift */,
+				21CAB792F5BEC81D360C0A9A /* MainMenuButton.swift */,
+				AE3ABEC6A49A46236954E0AE /* ScoreBoardView.swift */,
+				6BDE0EA499B5E02E1002FB2D /* TopNavigationBar.swift */,
+				2F28368D31B82CC5759A9CA7 /* TurnIndicatorView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		D072B394F37E4C04AA1DFB86 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				CF6C484FC8F763C0A8E614AA /* GameViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		F772189C460AA3B4C48659C9 = {
+			isa = PBXGroup;
+			children = (
+				651D9E3AA048464DC5E2F5B4 /* PetancaGame */,
+				A108FEECD88C859960FD9133 /* PetancaGameTests */,
+				1975BC6D60BBE5EA1AEECAE1 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		FF5724458730769C863F031D /* Sprites */ = {
+			isa = PBXGroup;
+			children = (
+				7E92758110539B8A4C0D1B7E /* PetancaFieldView.swift */,
+			);
+			path = Sprites;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		15311108C01F08005217D029 /* PetancaGameTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6436247D37F549C3DFD7DFE3 /* Build configuration list for PBXNativeTarget "PetancaGameTests" */;
+			buildPhases = (
+				71620DBC01B396B049BB9190 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5577F3F6B2824C2331CEC301 /* PBXTargetDependency */,
+			);
+			name = PetancaGameTests;
+			packageProductDependencies = (
+			);
+			productName = PetancaGameTests;
+			productReference = AAF429DF4523E6BC25B0F45F /* PetancaGameTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		222B6178FA4A6142A2A73036 /* PetancaGame */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4FBBF859B80CFAC11F5700C0 /* Build configuration list for PBXNativeTarget "PetancaGame" */;
+			buildPhases = (
+				DFF94C014CB1845E46FA8240 /* Sources */,
+				AC7597ACC3A3E654E2F56339 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PetancaGame;
+			packageProductDependencies = (
+			);
+			productName = PetancaGame;
+			productReference = 59D84FB0DE255CC3404F5E95 /* PetancaGame.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		378D3AA3C73347C83725F4C5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					15311108C01F08005217D029 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					222B6178FA4A6142A2A73036 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 71B889575D9CA85418BDAF29 /* Build configuration list for PBXProject "PetancaGame" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = F772189C460AA3B4C48659C9;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 1975BC6D60BBE5EA1AEECAE1 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				222B6178FA4A6142A2A73036 /* PetancaGame */,
+				15311108C01F08005217D029 /* PetancaGameTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AC7597ACC3A3E654E2F56339 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4ADF15636EB7478847061300 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		71620DBC01B396B049BB9190 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				559732C2494A973EBAFB1B13 /* PetancaGameTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DFF94C014CB1845E46FA8240 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3EF768B33648E02267EEBF85 /* AIOpponent.swift in Sources */,
+				304D22C022BB8B1AB7898924 /* AboutView.swift in Sources */,
+				51D6132239DE3422519A747D /* Ball.swift in Sources */,
+				0338E4EAF540BD378B140943 /* CelebrationParticles.swift in Sources */,
+				557EB4801F651E955A3E7A6C /* Cochonnet.swift in Sources */,
+				2A66535BD75625702C3314EF /* GameControlsView.swift in Sources */,
+				CE0AFCBF4953006173C1526E /* GameMode.swift in Sources */,
+				E84D0172B9D8CCDCA1F097E1 /* GameView.swift in Sources */,
+				F23CB93652ED0C1B30E09CA2 /* GameViewModel.swift in Sources */,
+				E2E0BE798CD0B2628E4ED4DF /* L10n.swift in Sources */,
+				DD3DCBA836C24E81ECEA0F60 /* LanguageManager.swift in Sources */,
+				97926AF7DC6FF49BDD367918 /* MainMenuButton.swift in Sources */,
+				35BD3C26B11A44FCE46103B7 /* MainMenuView.swift in Sources */,
+				ABE924E162839E85DF9B8938 /* NewGameView.swift in Sources */,
+				FAE665D01AE20B03A0FE1B4E /* PetancaFieldView.swift in Sources */,
+				95FFBC0FD03355EE5C56E8AB /* PetancaGameApp.swift in Sources */,
+				2631DD6F1AC5E55317D7B62A /* PetancaScene.swift in Sources */,
+				8AE5E665E9DE0183D031A6D3 /* RootView.swift in Sources */,
+				FEE5F6D4F8CC25777F9032A3 /* ScoreBoardView.swift in Sources */,
+				E8FA1AAF21724F6024AFF6F6 /* SettingsView.swift in Sources */,
+				EE3C0F5A6D048CE2E3352A91 /* SoundManager.swift in Sources */,
+				3E328284B3974CBDCAD6EC27 /* SplashView.swift in Sources */,
+				312C5C1224A93EAA87D96D0D /* Team.swift in Sources */,
+				A28E6B6AD8BC55551FC800C6 /* ThemeManager.swift in Sources */,
+				3415228B132F74CA54226966 /* TopNavigationBar.swift in Sources */,
+				B744ED67DDCEC90DC83441B4 /* TurnIndicatorView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5577F3F6B2824C2331CEC301 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 222B6178FA4A6142A2A73036 /* PetancaGame */;
+			targetProxy = 61F34FADCB1C363E69FF59CE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		4B16C5A489E47E661BA91AD8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ividi.petanca.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PetancaGame.app/PetancaGame";
+			};
+			name = Release;
+		};
+		739F94B51FE7BC71473F93E3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		8DDABD1E9ABB9C321D845447 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ividi.petanca.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PetancaGame.app/PetancaGame";
+			};
+			name = Debug;
+		};
+		9EC295096135002B9ED9CB1E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = PetancaGame/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ividi.petanca;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CE8C38C420BA9BC86260D8E8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		DFCD51C17CAF58D95985B74D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = PetancaGame/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ividi.petanca;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4FBBF859B80CFAC11F5700C0 /* Build configuration list for PBXNativeTarget "PetancaGame" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9EC295096135002B9ED9CB1E /* Debug */,
+				DFCD51C17CAF58D95985B74D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6436247D37F549C3DFD7DFE3 /* Build configuration list for PBXNativeTarget "PetancaGameTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8DDABD1E9ABB9C321D845447 /* Debug */,
+				4B16C5A489E47E661BA91AD8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		71B889575D9CA85418BDAF29 /* Build configuration list for PBXProject "PetancaGame" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CE8C38C420BA9BC86260D8E8 /* Debug */,
+				739F94B51FE7BC71473F93E3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 378D3AA3C73347C83725F4C5 /* Project object */;
+}

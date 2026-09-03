@@ -1,0 +1,44 @@
+name: PetancaGame
+options:
+  bundleIdPrefix: dev.ividi
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+targets:
+  PetancaGame:
+    type: application
+    platform: iOS
+    sources:
+      - path: PetancaGame
+    info:
+      path: PetancaGame/Info.plist
+      properties:
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.ividi.petanca
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        TARGETED_DEVICE_FAMILY: "1,2"
+    scheme: {}
+  PetancaGameTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: PetancaGameTests
+    dependencies:
+      - target: PetancaGame
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.ividi.petanca.tests

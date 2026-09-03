@@ -1,0 +1,99 @@
+import SwiftUI
+
+struct NewGameView: View {
+    @EnvironmentObject var languageManager: LanguageManager
+    var onBack: () -> Void
+    var onStart: (GameMode, Difficulty) -> Void
+
+    @State private var selectedMode: GameMode = .singles
+    @State private var selectedDifficulty: Difficulty = .medium
+
+    var body: some View {
+        VStack(spacing: 0) {
+            TopNavigationBar(showBack: true, onBack: onBack)
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 28) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(languageManager.t(.selectMode))
+                            .font(.system(size: 28, weight: .bold, design: .rounded))
+                        Text(languageManager.t(.selectModeSubtitle))
+                            .font(.system(size: 14))
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.top, 20)
+
+                    VStack(spacing: 12) {
+                        ForEach(GameMode.allCases) { mode in
+                            modeCard(mode)
+                        }
+                    }
+
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text(languageManager.t(.difficulty))
+                            .font(.system(size: 18, weight: .semibold, design: .rounded))
+                        Picker("", selection: $selectedDifficulty) {
+                            ForEach(Difficulty.allCases, id: \.self) { d in
+                                Text(languageManager.t(d.titleKey)).tag(d)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                    }
+
+                    Button {
+                        onStart(selectedMode, selectedDifficulty)
+                    } label: {
+                        Text(languageManager.t(.start))
+                            .font(.system(size: 18, weight: .bold, design: .rounded))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .background(
+                                LinearGradient(colors: [Color("PrimaryOrange"), Color("BurntYellow")], startPoint: .leading, endPoint: .trailing)
+                            )
+                            .foregroundColor(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                            .shadow(color: Color("PrimaryOrange").opacity(0.35), radius: 12, y: 6)
+                    }
+                    .padding(.top, 8)
+                }
+                .padding(.horizontal, 24)
+                .padding(.bottom, 40)
+            }
+        }
+        .background(Color(.systemBackground).ignoresSafeArea())
+    }
+
+    private func modeCard(_ mode: GameMode) -> some View {
+        Button {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { selectedMode = mode }
+        } label: {
+            HStack(spacing: 16) {
+                Image(systemName: mode.icon)
+                    .font(.system(size: 20, weight: .semibold))
+                    .frame(width: 34)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(languageManager.t(mode.titleKey))
+                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                    Text("\(mode.playersPerTeam) x \(mode.playersPerTeam) · \(mode.ballsPerPlayer) \(languageManager.t(.ballsRemaining).lowercased())")
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                if selectedMode == mode {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(Color("PrimaryOrange"))
+                }
+            }
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(.ultraThinMaterial)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(selectedMode == mode ? Color("PrimaryOrange") : Color.clear, lineWidth: 2)
+            )
+            .foregroundColor(.primary)
+        }
+    }
+}
