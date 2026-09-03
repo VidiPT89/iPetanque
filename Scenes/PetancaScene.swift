@@ -178,7 +178,23 @@ final class PetancaScene: SKScene {
                 node.physicsBody?.applyImpulse(impulse)
                 self.scheduleSettleReport()
             } else {
-                self.onBallLanded?(id, target)
+                // The new resting `physicsBody` can overlap an already-landed
+                // boule sitting almost exactly at `target` (e.g. two AI
+                // throws both aiming at the cochonnet with little scatter)
+                // — SpriteKit's passive collision resolution nudges them
+                // apart on the very next physics step, purely from the
+                // world simulation, with no impulse involved. Waiting one
+                // short tick and reporting the node's *actual* settled
+                // position (instead of blindly trusting `target`) keeps the
+                // model in sync with what the player actually sees, instead
+                // of scoring/AI logic silently working off a stale point.
+                self.run(SKAction.sequence([
+                    SKAction.wait(forDuration: 0.12),
+                    SKAction.run { [weak self, weak node] in
+                        guard let node else { return }
+                        self?.onBallLanded?(id, node.position)
+                    },
+                ]))
             }
         }
     }
