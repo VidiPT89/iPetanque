@@ -43,23 +43,20 @@ final class GameViewModel: ObservableObject {
         teamBScore = 0
         winner = nil
         startingTeam = Bool.random() ? .teamA : .teamB
-        phase = .coinToss
-        prepareEnd(starter: startingTeam)
+        prepareEnd(starter: startingTeam, phase: .coinToss)
     }
 
-    private func prepareEnd(starter: Team) {
+    private func prepareEnd(starter: Team, phase newPhase: GamePhase) {
         balls = []
         cochonnet = nil
         ballsThrown = [.teamA: 0, .teamB: 0]
         currentTeam = starter
-        phase = .throwCochonnet
+        phase = newPhase
     }
 
     func confirmCoinToss() {
         phase = .throwCochonnet
-        if currentTeam == .teamB {
-            triggerAITurnIfNeeded()
-        }
+        triggerAITurnIfNeeded()
     }
 
     // MARK: - Throw entry points
@@ -211,10 +208,8 @@ final class GameViewModel: ObservableObject {
     func continueAfterEnd() {
         guard phase != .gameOver else { return }
         let nextStarter = lastEndWinner ?? startingTeam
-        prepareEnd(starter: nextStarter)
-        if currentTeam == .teamB {
-            triggerAITurnIfNeeded()
-        }
+        prepareEnd(starter: nextStarter, phase: .throwCochonnet)
+        triggerAITurnIfNeeded()
     }
 
     func resetGame() {

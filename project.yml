@@ -14,9 +14,17 @@ targets:
     type: application
     platform: iOS
     sources:
-      - path: PetancaGame
+      - path: PetancaGameApp.swift
+      - path: Models
+      - path: ViewModels
+      - path: Views
+      - path: Managers
+      - path: Localization
+      - path: Physics
+      - path: Scenes
+      - path: Resources
     info:
-      path: PetancaGame/Info.plist
+      path: Info.plist
       properties:
         UILaunchScreen: {}
         UISupportedInterfaceOrientations:
