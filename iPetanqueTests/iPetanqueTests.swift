@@ -1,7 +1,7 @@
 import XCTest
-@testable import PetancaGame
+@testable import iPetanque
 
-final class PetancaGameTests: XCTestCase {
+final class iPetanqueTests: XCTestCase {
     func testGameModeBallCounts() {
         XCTAssertEqual(GameMode.singles.ballsPerPlayer, 3)
         XCTAssertEqual(GameMode.doubles.ballsPerPlayer, 3)

@@ -15,10 +15,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "222B6178FA4A6142A2A73036"
-               BuildableName = "PetancaGame.app"
-               BlueprintName = "PetancaGame"
-               ReferencedContainer = "container:PetancaGame.xcodeproj">
+               BlueprintIdentifier = "11BC3655577658712CDF2059"
+               BuildableName = "iPetanque.app"
+               BlueprintName = "iPetanque"
+               ReferencedContainer = "container:iPetanque.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "222B6178FA4A6142A2A73036"
-            BuildableName = "PetancaGame.app"
-            BlueprintName = "PetancaGame"
-            ReferencedContainer = "container:PetancaGame.xcodeproj">
+            BlueprintIdentifier = "11BC3655577658712CDF2059"
+            BuildableName = "iPetanque.app"
+            BlueprintName = "iPetanque"
+            ReferencedContainer = "container:iPetanque.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
@@ -57,10 +57,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "222B6178FA4A6142A2A73036"
-            BuildableName = "PetancaGame.app"
-            BlueprintName = "PetancaGame"
-            ReferencedContainer = "container:PetancaGame.xcodeproj">
+            BlueprintIdentifier = "11BC3655577658712CDF2059"
+            BuildableName = "iPetanque.app"
+            BlueprintName = "iPetanque"
+            ReferencedContainer = "container:iPetanque.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
@@ -76,10 +76,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "222B6178FA4A6142A2A73036"
-            BuildableName = "PetancaGame.app"
-            BlueprintName = "PetancaGame"
-            ReferencedContainer = "container:PetancaGame.xcodeproj">
+            BlueprintIdentifier = "11BC3655577658712CDF2059"
+            BuildableName = "iPetanque.app"
+            BlueprintName = "iPetanque"
+            ReferencedContainer = "container:iPetanque.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>

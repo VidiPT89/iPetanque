@@ -1,4 +1,4 @@
-name: PetancaGame
+name: iPetanque
 options:
   bundleIdPrefix: dev.ividi
   deploymentTarget:
@@ -10,11 +10,11 @@ settings:
     DEVELOPMENT_TEAM: ""
     CODE_SIGN_STYLE: Automatic
 targets:
-  PetancaGame:
+  iPetanque:
     type: application
     platform: iOS
     sources:
-      - path: PetancaGameApp.swift
+      - path: iPetanqueApp.swift
       - path: Models
       - path: ViewModels
       - path: Views
@@ -40,13 +40,13 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         TARGETED_DEVICE_FAMILY: "1,2"
     scheme: {}
-  PetancaGameTests:
+  iPetanqueTests:
     type: bundle.unit-test
     platform: iOS
     sources:
-      - path: PetancaGameTests
+      - path: iPetanqueTests
     dependencies:
-      - target: PetancaGame
+      - target: iPetanque
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.ividi.petanca.tests

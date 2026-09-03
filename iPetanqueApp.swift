@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct PetancaGameApp: App {
+struct iPetanqueApp: App {
     @StateObject private var themeManager = ThemeManager()
     @StateObject private var languageManager = LanguageManager()
     @StateObject private var soundManager = SoundManager()

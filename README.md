@@ -39,7 +39,7 @@
 ```bash
 git clone https://github.com/VidiPT89/iPetanque.git
 cd iPetanque
-open PetancaGame.xcodeproj
+open iPetanque.xcodeproj
 ```
 
 Build and run (`⌘R`) on the simulator or a connected device.
@@ -56,7 +56,7 @@ Build and run (`⌘R`) on the simulator or a connected device.
 ## 🧪 Testing
 
 ```bash
-xcodebuild -project PetancaGame.xcodeproj -scheme PetancaGame -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test
+xcodebuild -project iPetanque.xcodeproj -scheme iPetanque -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test
 ```
 
 ## 📄 License
