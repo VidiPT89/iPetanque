@@ -1,4 +1,3 @@
-import Combine
 import CoreGraphics
 import SwiftUI
 
@@ -173,7 +172,7 @@ final class GameViewModel: ObservableObject {
     // MARK: - Scene callbacks
 
     func cochonnetDidLand(at point: CGPoint) {
-        cochonnet = Cochonnet(position: point, isPlaced: true)
+        cochonnet = Cochonnet(position: point)
         phase = .throwBall
         triggerAITurnIfNeeded()
     }
@@ -266,12 +265,5 @@ final class GameViewModel: ObservableObject {
         let nextStarter = lastEndWinner ?? startingTeam
         prepareEnd(starter: nextStarter, phase: .throwCochonnet)
         triggerAITurnIfNeeded()
-    }
-
-    func resetGame() {
-        teamAScore = 0
-        teamBScore = 0
-        winner = nil
-        phase = .coinToss
     }
 }

@@ -13,6 +13,7 @@ struct TopNavigationBar: View {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 17, weight: .semibold))
                 }
+                .accessibilityLabel(languageManager.t(.menu))
             }
 
             Text(languageManager.t(.appName))
@@ -32,6 +33,7 @@ struct TopNavigationBar: View {
                 Image(systemName: "globe")
                     .imageScale(.medium)
             }
+            .accessibilityLabel(languageManager.t(.language))
 
             Menu {
                 Button {
@@ -47,6 +49,7 @@ struct TopNavigationBar: View {
                 Image(systemName: themeManager.iconName)
                     .imageScale(.medium)
             }
+            .accessibilityLabel(languageManager.t(.theme))
         }
         .foregroundColor(.primary)
         .padding(.horizontal, 16)

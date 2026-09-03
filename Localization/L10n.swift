@@ -3,14 +3,14 @@ import Foundation
 enum L10nKey: String {
     case appName
     case tagline
-    case newGame, continueGame, settings, about, exit
+    case newGame, settings, about
     case language, theme, darkMode, lightMode, systemMode
     case developedBy
     case yourTurn, opponentTurn, teamTurn
-    case points, menu, rules, difficulty, easy, medium, hard
-    case sound, music, on, off, resetProgress
+    case menu, rules, difficulty, easy, medium, hard
+    case sound
     case victory, defeat, playAgain, backToMenu
-    case score, throwBall, undo, measureDistance
+    case undo, measureDistance
     case singles, doubles, triples
     case selectMode, selectModeSubtitle
     case teamA, teamB
@@ -19,9 +19,9 @@ enum L10nKey: String {
     case aboutDescription, aboutRulesTitle
     case rule1, rule2, rule3, rule4
     case website, github
-    case tapToThrow, dragToAim, releaseToThrow
+    case tapToThrow, dragToAim
     case ballsRemaining, cochonnet
-    case close, start
+    case start
 }
 
 enum L10n {
@@ -29,10 +29,8 @@ enum L10n {
         .appName: "Petanca",
         .tagline: "O clássico jogo francês, agora no teu iPhone",
         .newGame: "Novo Jogo",
-        .continueGame: "Continuar",
         .settings: "Configurações",
         .about: "Sobre",
-        .exit: "Sair",
         .language: "Idioma",
         .theme: "Tema",
         .darkMode: "Escuro",
@@ -42,7 +40,6 @@ enum L10n {
         .yourTurn: "O teu turno",
         .opponentTurn: "Turno do adversário",
         .teamTurn: "Turno da equipa %@",
-        .points: "Pontos",
         .menu: "Menu",
         .rules: "Regras",
         .difficulty: "Dificuldade",
@@ -50,16 +47,10 @@ enum L10n {
         .medium: "Médio",
         .hard: "Difícil",
         .sound: "Som",
-        .music: "Música",
-        .on: "Ligado",
-        .off: "Desligado",
-        .resetProgress: "Repor Progresso",
         .victory: "Vitória!",
         .defeat: "Derrota",
         .playAgain: "Jogar Novamente",
         .backToMenu: "Voltar ao Menu",
-        .score: "Pontuação",
-        .throwBall: "Lançar Bola",
         .undo: "Desfazer",
         .measureDistance: "Medir",
         .singles: "Simples",
@@ -84,10 +75,8 @@ enum L10n {
         .github: "GitHub",
         .tapToThrow: "Toca para lançar",
         .dragToAim: "Arrasta para apontar",
-        .releaseToThrow: "Solta para lançar",
         .ballsRemaining: "Bolas restantes",
         .cochonnet: "Cochonnet",
-        .close: "Fechar",
         .start: "Começar",
     ]
 
@@ -95,10 +84,8 @@ enum L10n {
         .appName: "Petanca",
         .tagline: "The classic French game, now on your iPhone",
         .newGame: "New Game",
-        .continueGame: "Continue",
         .settings: "Settings",
         .about: "About",
-        .exit: "Exit",
         .language: "Language",
         .theme: "Theme",
         .darkMode: "Dark",
@@ -108,7 +95,6 @@ enum L10n {
         .yourTurn: "Your turn",
         .opponentTurn: "Opponent's turn",
         .teamTurn: "Team %@'s turn",
-        .points: "Points",
         .menu: "Menu",
         .rules: "Rules",
         .difficulty: "Difficulty",
@@ -116,16 +102,10 @@ enum L10n {
         .medium: "Medium",
         .hard: "Hard",
         .sound: "Sound",
-        .music: "Music",
-        .on: "On",
-        .off: "Off",
-        .resetProgress: "Reset Progress",
         .victory: "Victory!",
         .defeat: "Defeat",
         .playAgain: "Play Again",
         .backToMenu: "Back to Menu",
-        .score: "Score",
-        .throwBall: "Throw Ball",
         .undo: "Undo",
         .measureDistance: "Measure",
         .singles: "Singles",
@@ -150,10 +130,8 @@ enum L10n {
         .github: "GitHub",
         .tapToThrow: "Tap to throw",
         .dragToAim: "Drag to aim",
-        .releaseToThrow: "Release to throw",
         .ballsRemaining: "Balls remaining",
         .cochonnet: "Cochonnet",
-        .close: "Close",
         .start: "Start",
     ]
 

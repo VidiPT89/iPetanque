@@ -6,7 +6,14 @@ struct NewGameView: View {
     var onStart: (GameMode, Difficulty) -> Void
 
     @State private var selectedMode: GameMode = .singles
-    @State private var selectedDifficulty: Difficulty = .medium
+    @AppStorage("difficulty") private var difficultyRaw = Difficulty.medium.rawValue
+
+    private var selectedDifficulty: Binding<Difficulty> {
+        Binding(
+            get: { Difficulty(rawValue: difficultyRaw) ?? .medium },
+            set: { difficultyRaw = $0.rawValue }
+        )
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -32,7 +39,7 @@ struct NewGameView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Text(languageManager.t(.difficulty))
                             .font(.system(size: 18, weight: .semibold, design: .rounded))
-                        Picker("", selection: $selectedDifficulty) {
+                        Picker("", selection: selectedDifficulty) {
                             ForEach(Difficulty.allCases, id: \.self) { d in
                                 Text(languageManager.t(d.titleKey)).tag(d)
                             }
@@ -41,7 +48,7 @@ struct NewGameView: View {
                     }
 
                     Button {
-                        onStart(selectedMode, selectedDifficulty)
+                        onStart(selectedMode, selectedDifficulty.wrappedValue)
                     } label: {
                         Text(languageManager.t(.start))
                             .font(.system(size: 18, weight: .bold, design: .rounded))

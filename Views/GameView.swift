@@ -97,6 +97,7 @@ struct GameView: View {
                     .font(.system(size: 26))
                     .foregroundColor(.white.opacity(0.85))
             }
+            .accessibilityLabel(languageManager.t(.menu))
             Spacer()
             ScoreBoardView(viewModel: viewModel)
             Spacer()

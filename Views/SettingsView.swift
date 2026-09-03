@@ -43,7 +43,6 @@ struct SettingsView: View {
 
                 Section {
                     Toggle(languageManager.t(.sound), isOn: $soundManager.soundEnabled)
-                    Toggle(languageManager.t(.music), isOn: $soundManager.musicEnabled)
                 }
             }
         }

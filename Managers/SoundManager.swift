@@ -7,7 +7,6 @@ import SwiftUI
 /// sound/music preferences.
 final class SoundManager: ObservableObject {
     @AppStorage("soundEnabled") var soundEnabled: Bool = true
-    @AppStorage("musicEnabled") var musicEnabled: Bool = true
 
     func playThrow() {
         guard soundEnabled else { return }
@@ -22,11 +21,6 @@ final class SoundManager: ObservableObject {
     func playVictory() {
         guard soundEnabled else { return }
         AudioServicesPlaySystemSound(1025)
-    }
-
-    func playTap() {
-        guard soundEnabled else { return }
-        AudioServicesPlaySystemSound(1104)
     }
 
     func haptic(_ style: UIImpactFeedbackGenerator.FeedbackStyle = .medium) {
