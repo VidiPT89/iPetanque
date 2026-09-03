@@ -116,7 +116,7 @@ final class StatsManager: ObservableObject {
             defaults.set(currentStreak, forKey: Key.currentStreak)
             unlock(.firstWin)
             if opponentScore == 0 { unlock(.shutout) }
-            if currentStreak >= 5 { unlock(.streak5) }
+            if currentStreak >= 10 { unlock(.streak5) }
         } else {
             currentStreak = 0
             defaults.set(currentStreak, forKey: Key.currentStreak)

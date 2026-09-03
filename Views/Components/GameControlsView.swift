@@ -30,7 +30,7 @@ struct GameControlsView: View {
     }
 
     private var hint: String {
-        let isPlayerThrow = viewModel.currentTeam.isHuman
+        let isPlayerThrow = viewModel.isHumanControlled(viewModel.currentTeam)
             && (viewModel.phase == .throwCochonnet || viewModel.phase == .throwBall)
         return isPlayerThrow ? languageManager.t(.dragToAim) : ""
     }

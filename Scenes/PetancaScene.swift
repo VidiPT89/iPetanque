@@ -118,7 +118,7 @@ final class PetancaScene: SKScene {
         glow.blendMode = .add
         node.addChild(glow)
 
-        animateThrow(node: node, to: target, isShot: false) { [weak self] in
+        animateThrow(node: node, to: target, isShot: false, curve: 0) { [weak self] in
             self?.spawnDust(at: target, tint: SKColor(red: 0.97, green: 0.77, blue: 0.28, alpha: 0.5))
             self?.attachPhysics(to: node, category: PhysicsCategory.cochonnet, radius: 6, mass: 0.35)
             self?.onCochonnetLanded?(target)
@@ -161,10 +161,10 @@ final class PetancaScene: SKScene {
     /// `impulseMagnitude` only matters when `isShot` is true — it scales
     /// the real physics impulse applied on arrival, so a harder pull (or a
     /// tougher AI) genuinely knocks boules further, not just cosmetically.
-    func throwBall(id: UUID, to target: CGPoint, isShot: Bool, impulseMagnitude: CGFloat) {
+    func throwBall(id: UUID, to target: CGPoint, isShot: Bool, impulseMagnitude: CGFloat, curve: CGFloat) {
         guard let node = ballNodes[id] else { return }
         let origin = node.position
-        animateThrow(node: node, to: target, isShot: isShot) { [weak self] in
+        animateThrow(node: node, to: target, isShot: isShot, curve: curve) { [weak self] in
             guard let self else { return }
             self.spawnDust(at: target, tint: SKColor.white.withAlphaComponent(0.4))
             self.attachPhysics(to: node, category: PhysicsCategory.ball, radius: 9, mass: 1.0)
@@ -253,8 +253,9 @@ final class PetancaScene: SKScene {
         return container
     }
 
-    private func animateThrow(node: SKNode, to target: CGPoint, isShot: Bool, completion: @escaping () -> Void) {
-        let distance = hypot(target.x - node.position.x, target.y - node.position.y)
+    private func animateThrow(node: SKNode, to target: CGPoint, isShot: Bool, curve: CGFloat, completion: @escaping () -> Void) {
+        let origin = node.position
+        let distance = hypot(target.x - origin.x, target.y - origin.y)
         // A "shot" (tirer) is a flat, fast, direct throw — official petanque
         // describes it as landing with little to no roll, unlike the high,
         // gentle arc of a "point" throw. Shorter duration and a much
@@ -276,8 +277,30 @@ final class PetancaScene: SKScene {
         fallScale.timingMode = .easeIn
         let arcScale = SKAction.sequence([riseScale, fallScale])
 
-        let move = SKAction.move(to: target, duration: duration)
-        move.timingMode = isShot ? .linear : .easeOut
+        let move: SKAction
+        // "Effect": bend the path through an offset midpoint instead of a
+        // straight line, when the player flicked sideways at release.
+        // Shots stay flat/direct on purpose (see `humanThrow`, which never
+        // passes a nonzero curve for a shot).
+        if abs(curve) > 0.06, distance > 1 {
+            let dx = target.x - origin.x
+            let dy = target.y - origin.y
+            let perpendicular = CGVector(dx: -dy / distance, dy: dx / distance)
+            let bend = distance * 0.22 * curve
+            let midpoint = CGPoint(
+                x: origin.x + dx * 0.5 + perpendicular.dx * bend,
+                y: origin.y + dy * 0.5 + perpendicular.dy * bend
+            )
+            let toMidpoint = SKAction.move(to: midpoint, duration: duration * 0.5)
+            toMidpoint.timingMode = .easeOut
+            let toTarget = SKAction.move(to: target, duration: duration * 0.5)
+            toTarget.timingMode = .easeIn
+            move = SKAction.sequence([toMidpoint, toTarget])
+        } else {
+            let straight = SKAction.move(to: target, duration: duration)
+            straight.timingMode = isShot ? .linear : .easeOut
+            move = straight
+        }
 
         let spin = SKAction.rotate(byAngle: .pi * (isShot ? 6 : 4), duration: duration)
 

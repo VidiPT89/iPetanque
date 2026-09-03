@@ -28,6 +28,9 @@ struct TurnIndicatorView: View {
     }
 
     private var label: String {
-        viewModel.currentTeam.isHuman ? languageManager.t(.yourTurn) : languageManager.t(.opponentTurn)
+        if viewModel.matchType == .localTwoPlayer {
+            return String(format: languageManager.t(.teamTurn), languageManager.t(viewModel.currentTeam.nameKey))
+        }
+        return viewModel.currentTeam.isHuman ? languageManager.t(.yourTurn) : languageManager.t(.opponentTurn)
     }
 }

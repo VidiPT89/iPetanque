@@ -3,9 +3,10 @@ import SwiftUI
 struct NewGameView: View {
     @EnvironmentObject var languageManager: LanguageManager
     var onBack: () -> Void
-    var onStart: (GameMode, Difficulty, Int, Terrain) -> Void
+    var onStart: (GameMode, Difficulty, Int, Terrain, MatchType) -> Void
 
     @State private var selectedMode: GameMode = .singles
+    @State private var matchType: MatchType = .vsCPU
     @AppStorage("difficulty") private var difficultyRaw = Difficulty.medium.rawValue
     @AppStorage("targetScore") private var targetScore = 13
     @AppStorage("terrain") private var terrainRaw = Terrain.hardDirt.rawValue
@@ -46,25 +47,40 @@ struct NewGameView: View {
                     }
 
                     VStack(alignment: .leading, spacing: 10) {
-                        Text(languageManager.t(.difficulty))
+                        Text(languageManager.t(.opponentLabel))
                             .font(.system(size: 18, weight: .semibold, design: .rounded))
-                        Picker("", selection: selectedDifficulty) {
-                            ForEach(Difficulty.allCases, id: \.self) { d in
-                                Text(languageManager.t(d.titleKey)).tag(d)
+                        Picker("", selection: $matchType) {
+                            ForEach(MatchType.allCases) { type in
+                                Label(languageManager.t(type.titleKey), systemImage: type.icon).tag(type)
                             }
                         }
                         .pickerStyle(.segmented)
                     }
 
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text(languageManager.t(.targetScoreLabel))
-                            .font(.system(size: 18, weight: .semibold, design: .rounded))
-                        Picker("", selection: $targetScore) {
-                            Text("6").tag(6)
-                            Text("11").tag(11)
-                            Text("13").tag(13)
+                    if matchType == .vsCPU {
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text(languageManager.t(.difficulty))
+                                .font(.system(size: 18, weight: .semibold, design: .rounded))
+                            Picker("", selection: selectedDifficulty) {
+                                ForEach(Difficulty.allCases, id: \.self) { d in
+                                    Text(languageManager.t(d.titleKey)).tag(d)
+                                }
+                            }
+                            .pickerStyle(.segmented)
                         }
-                        .pickerStyle(.segmented)
+                    }
+
+                    if matchType != .freeTraining {
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text(languageManager.t(.targetScoreLabel))
+                                .font(.system(size: 18, weight: .semibold, design: .rounded))
+                            Picker("", selection: $targetScore) {
+                                Text("6").tag(6)
+                                Text("11").tag(11)
+                                Text("13").tag(13)
+                            }
+                            .pickerStyle(.segmented)
+                        }
                     }
 
                     VStack(alignment: .leading, spacing: 10) {
@@ -79,7 +95,7 @@ struct NewGameView: View {
                     }
 
                     Button {
-                        onStart(selectedMode, selectedDifficulty.wrappedValue, targetScore, selectedTerrain.wrappedValue)
+                        onStart(selectedMode, selectedDifficulty.wrappedValue, targetScore, selectedTerrain.wrappedValue, matchType)
                     } label: {
                         Text(languageManager.t(.start))
                             .font(.system(size: 18, weight: .bold, design: .rounded))

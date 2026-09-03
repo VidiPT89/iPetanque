@@ -56,7 +56,7 @@ struct GameView: View {
     }
 
     private var canThrow: Bool {
-        viewModel.currentTeam.isHuman && (viewModel.phase == .throwCochonnet || viewModel.phase == .throwBall)
+        viewModel.isHumanControlled(viewModel.currentTeam) && (viewModel.phase == .throwCochonnet || viewModel.phase == .throwBall)
     }
 
     /// Drag distance normalized against a reference "full pull" length, so
@@ -119,6 +119,25 @@ struct GameView: View {
         }
     }
 
+    /// Reads "effect" (spin) from the drag's own momentum at release: how
+    /// far `predictedEndLocation` (SwiftUI's velocity-based extrapolation)
+    /// deviates *sideways* from the straight aim line tells us the player
+    /// flicked left/right as they let go, same intent as brushing a real
+    /// boule off-center. Clamped to -1...1.
+    private func lateralEffect(for value: DragGesture.Value, origin: CGPoint) -> CGFloat {
+        let aim = CGVector(dx: value.location.x - origin.x, dy: value.location.y - origin.y)
+        let aimLength = max(hypot(aim.dx, aim.dy), 1)
+        let aimDir = CGVector(dx: aim.dx / aimLength, dy: aim.dy / aimLength)
+        let perpendicular = CGVector(dx: -aimDir.dy, dy: aimDir.dx)
+
+        let momentum = CGVector(
+            dx: value.predictedEndLocation.x - value.location.x,
+            dy: value.predictedEndLocation.y - value.location.y
+        )
+        let lateral = momentum.dx * perpendicular.dx + momentum.dy * perpendicular.dy
+        return max(-1, min(1, lateral / 70))
+    }
+
     private func throwGesture(in size: CGSize) -> some Gesture {
         DragGesture(minimumDistance: 4)
             .updating($dragTarget) { value, state, _ in
@@ -133,24 +152,45 @@ struct GameView: View {
                     x: value.location.x / size.width * viewModel.fieldSize.width,
                     y: (1 - value.location.y / size.height) * viewModel.fieldSize.height
                 )
-                viewModel.humanThrow(toward: scaled, power: power)
+                viewModel.humanThrow(toward: scaled, power: power, curve: lateralEffect(for: value, origin: origin))
             }
     }
 
     private var topBar: some View {
-        HStack {
-            Button(action: onExit) {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 26))
-                    .foregroundColor(.white.opacity(0.85))
+        VStack(spacing: 6) {
+            HStack {
+                Button(action: onExit) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 26))
+                        .foregroundColor(.white.opacity(0.85))
+                }
+                .accessibilityLabel(languageManager.t(.menu))
+                Spacer()
+                ScoreBoardView(viewModel: viewModel)
+                Spacer()
+                Color.clear.frame(width: 26, height: 26)
             }
-            .accessibilityLabel(languageManager.t(.menu))
-            Spacer()
-            ScoreBoardView(viewModel: viewModel)
-            Spacer()
-            Color.clear.frame(width: 26, height: 26)
+            ballsRemainingRow
         }
         .padding(.horizontal, 16)
+    }
+
+    private var ballsRemainingRow: some View {
+        HStack(spacing: 24) {
+            ballsPill(team: .teamA)
+            if !viewModel.isFreeTraining {
+                ballsPill(team: .teamB)
+            }
+        }
+    }
+
+    private func ballsPill(team: Team) -> some View {
+        HStack(spacing: 4) {
+            Circle().fill(Color.white.opacity(0.7)).frame(width: 8, height: 8)
+            Text("\(viewModel.remainingBalls(for: team)) \(languageManager.t(.ballsRemainingShort))")
+                .font(.system(size: 11, weight: .medium))
+                .foregroundColor(.white.opacity(0.75))
+        }
     }
 
     private var bottomBar: some View {
@@ -182,16 +222,18 @@ struct GameView: View {
     private var endOfEndOverlay: some View {
         overlayBackground {
             VStack(spacing: 18) {
-                Text(languageManager.t(.endOfEnd))
+                Text(languageManager.t(viewModel.isFreeTraining ? .trainingRoundComplete : .endOfEnd))
                     .font(.system(size: 26, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
-                Text(String(format: languageManager.t(.endOfEndSubtitle), languageManager.t((viewModel.lastEndWinner ?? .teamA).nameKey), viewModel.lastEndPoints))
-                    .font(.system(size: 15))
-                    .foregroundColor(.white.opacity(0.85))
+                if !viewModel.isFreeTraining {
+                    Text(String(format: languageManager.t(.endOfEndSubtitle), languageManager.t((viewModel.lastEndWinner ?? .teamA).nameKey), viewModel.lastEndPoints))
+                        .font(.system(size: 15))
+                        .foregroundColor(.white.opacity(0.85))
+                }
                 Button {
                     viewModel.continueAfterEnd()
                 } label: {
-                    Text(languageManager.t(.continueButton))
+                    Text(languageManager.t(viewModel.isFreeTraining ? .newRound : .continueButton))
                         .font(.system(size: 16, weight: .bold))
                         .padding(.horizontal, 32)
                         .padding(.vertical, 12)
@@ -207,16 +249,22 @@ struct GameView: View {
         ZStack {
             overlayBackground {
                 VStack(spacing: 18) {
-                    Text(languageManager.t((viewModel.winner ?? .teamA).isHuman ? .victory : .defeat))
-                        .font(.system(size: 40, weight: .heavy, design: .rounded))
-                        .foregroundColor(.white)
+                    Group {
+                        if viewModel.matchType == .localTwoPlayer {
+                            Text(String(format: languageManager.t(.teamTurn), languageManager.t((viewModel.winner ?? .teamA).nameKey)))
+                        } else {
+                            Text(languageManager.t((viewModel.winner ?? .teamA).isHuman ? .victory : .defeat))
+                        }
+                    }
+                    .font(.system(size: 32, weight: .heavy, design: .rounded))
+                    .foregroundColor(.white)
                     Text("\(viewModel.teamAScore) - \(viewModel.teamBScore)")
                         .font(.system(size: 22, weight: .bold))
                         .foregroundColor(.white.opacity(0.9))
 
                     HStack(spacing: 14) {
                         Button {
-                            viewModel.startNewGame(mode: viewModel.mode, difficulty: viewModel.difficulty, targetScore: viewModel.targetScore, terrain: viewModel.terrain)
+                            viewModel.startNewGame(mode: viewModel.mode, difficulty: viewModel.difficulty, targetScore: viewModel.targetScore, terrain: viewModel.terrain, matchType: viewModel.matchType)
                         } label: {
                             Text(languageManager.t(.playAgain))
                                 .font(.system(size: 15, weight: .bold))

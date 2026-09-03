@@ -33,6 +33,8 @@ enum L10nKey: String {
     case achievementCarreau, achievementCarreauDesc
     case locked, unlocked, resetStats, resetStatsConfirm, cancel
     case ballColor, noAchievementsYet
+    case matchVsCPU, matchLocalTwoPlayer, matchFreeTraining, opponentLabel
+    case ballsRemainingShort, trainingRoundComplete, newRound
 }
 
 enum L10n {
@@ -107,7 +109,7 @@ enum L10n {
         .achievementShutout: "Vitória Impecável",
         .achievementShutoutDesc: "Vence por 13 a 0",
         .achievementStreak5: "Em Grande",
-        .achievementStreak5Desc: "5 vitórias seguidas",
+        .achievementStreak5Desc: "10 vitórias seguidas",
         .achievementSharpshooter: "Atirador Certeiro",
         .achievementSharpshooterDesc: "10 tiradas bem-sucedidas",
         .achievementCarreau: "Carreau!",
@@ -119,6 +121,13 @@ enum L10n {
         .cancel: "Cancelar",
         .ballColor: "Cor das Bolas",
         .noAchievementsYet: "Ainda sem conquistas — joga uma partida!",
+        .matchVsCPU: "vs CPU",
+        .matchLocalTwoPlayer: "1 vs 1 Local",
+        .matchFreeTraining: "Treino Livre",
+        .opponentLabel: "Adversário",
+        .ballsRemainingShort: "bolas",
+        .trainingRoundComplete: "Ronda de Treino Completa",
+        .newRound: "Nova Ronda",
     ]
 
     private static let en: [L10nKey: String] = [
@@ -192,7 +201,7 @@ enum L10n {
         .achievementShutout: "Flawless Victory",
         .achievementShutoutDesc: "Win 13-0",
         .achievementStreak5: "On a Roll",
-        .achievementStreak5Desc: "5 wins in a row",
+        .achievementStreak5Desc: "10 wins in a row",
         .achievementSharpshooter: "Sharpshooter",
         .achievementSharpshooterDesc: "10 successful shots",
         .achievementCarreau: "Carreau!",
@@ -204,6 +213,13 @@ enum L10n {
         .cancel: "Cancel",
         .ballColor: "Ball Color",
         .noAchievementsYet: "No achievements yet — play a match!",
+        .matchVsCPU: "vs CPU",
+        .matchLocalTwoPlayer: "1v1 Local",
+        .matchFreeTraining: "Free Training",
+        .opponentLabel: "Opponent",
+        .ballsRemainingShort: "balls",
+        .trainingRoundComplete: "Training Round Complete",
+        .newRound: "New Round",
     ]
 
     static func string(_ key: L10nKey, language: AppLanguage) -> String {

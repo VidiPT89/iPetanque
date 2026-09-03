@@ -17,6 +17,7 @@
 		2C10BB9D4AFD92D96A3A97AE /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2966FFFD70C9095369F2D0 /* StatisticsView.swift */; };
 		38910958CD97AFC102D1B340 /* ScoreBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E5B65AB92E8B2031A52298 /* ScoreBoardView.swift */; };
 		3CF45950897FD4C274708479 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94ADD5D5BB7BCA6B870A80A1 /* SoundManager.swift */; };
+		45B1692BFD3A5606714164D2 /* MatchType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE12289BB969187B97C2312E /* MatchType.swift */; };
 		4B655577440F090D97EE91C5 /* StatsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB276BAE2D1500AE8D775749 /* StatsManager.swift */; };
 		4BBD91F355F93D1BF79CEFB5 /* PetancaTextures.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8522878167A6A1119CFBC55 /* PetancaTextures.swift */; };
 		50988A1925323E61DABC8868 /* NewGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33B0323EC04A6F38D718EB9C /* NewGameView.swift */; };
@@ -91,6 +92,7 @@
 		BCF129E492618D8314809F6B /* iPetanqueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPetanqueTests.swift; sourceTree = "<group>"; };
 		BDAB5478339A3E284F06ACF4 /* iPetanqueTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = iPetanqueTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6FA5715A4DC1E43487F09D8 /* Ball.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ball.swift; sourceTree = "<group>"; };
+		CE12289BB969187B97C2312E /* MatchType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchType.swift; sourceTree = "<group>"; };
 		D44FAA33DB7CFF9856FBE378 /* LanguageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageManager.swift; sourceTree = "<group>"; };
 		D884CE8CFE2B91FE3F470B07 /* iPetanqueUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = iPetanqueUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4E5B65AB92E8B2031A52298 /* ScoreBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreBoardView.swift; sourceTree = "<group>"; };
@@ -245,6 +247,7 @@
 				571EABB34252F030B127EB0D /* BallAccent.swift */,
 				256F00C9056884550730E7A8 /* Cochonnet.swift */,
 				901A89E83BE960E21765D403 /* GameMode.swift */,
+				CE12289BB969187B97C2312E /* MatchType.swift */,
 				2915ACC477371F11B263FB3B /* Team.swift */,
 				311236B840CE99A04AFB428C /* Terrain.swift */,
 			);
@@ -384,6 +387,7 @@
 				8790680E79DDA3B9DC717885 /* LanguageManager.swift in Sources */,
 				1493613FEF09DCD639E6502E /* MainMenuButton.swift in Sources */,
 				5D1EDC63A0541EA6B7E9B990 /* MainMenuView.swift in Sources */,
+				45B1692BFD3A5606714164D2 /* MatchType.swift in Sources */,
 				50988A1925323E61DABC8868 /* NewGameView.swift in Sources */,
 				1D36C2CB2459733E72221377 /* PetancaFieldView.swift in Sources */,
 				CE10236D2408C20E79194FE1 /* PetancaScene.swift in Sources */,

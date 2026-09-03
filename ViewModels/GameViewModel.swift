@@ -26,6 +26,24 @@ final class GameViewModel: ObservableObject {
     @Published var measurement: String?
     @Published var terrain: Terrain = .hardDirt
     @Published var ballAccent: BallAccent = .silver
+    @Published var matchType: MatchType = .vsCPU
+
+    var isFreeTraining: Bool { matchType == .freeTraining }
+
+    /// Whether a human is at the controls for this team right now — always
+    /// true for both teams in local 2-player, always team A only otherwise
+    /// (vs CPU or free training, where team B never plays at all).
+    func isHumanControlled(_ team: Team) -> Bool {
+        matchType == .localTwoPlayer ? true : team.isHuman
+    }
+
+    private func isAIControlled(_ team: Team) -> Bool {
+        matchType == .vsCPU && !team.isHuman
+    }
+
+    func remainingBalls(for team: Team) -> Int {
+        max(0, ballsRemaining - (ballsThrown[team] ?? 0))
+    }
 
     weak var scene: PetancaScene?
     var soundManager: SoundManager?
@@ -67,19 +85,27 @@ final class GameViewModel: ObservableObject {
 
     var ballsRemaining: Int { mode.playersPerTeam * mode.ballsPerPlayer }
 
-    func startNewGame(mode: GameMode, difficulty: Difficulty, targetScore: Int, terrain: Terrain) {
+    func startNewGame(mode: GameMode, difficulty: Difficulty, targetScore: Int, terrain: Terrain, matchType: MatchType) {
         self.mode = mode
         self.difficulty = difficulty
         self.targetScore = targetScore
         self.terrain = terrain
+        self.matchType = matchType
         if let stored = UserDefaults.standard.string(forKey: "ballAccent"), let accent = BallAccent(rawValue: stored) {
             self.ballAccent = accent
         }
         teamAScore = 0
         teamBScore = 0
         winner = nil
-        startingTeam = Bool.random() ? .teamA : .teamB
-        prepareEnd(starter: startingTeam, phase: .coinToss)
+        if matchType == .freeTraining {
+            // No opponent, no suspense — always the player, straight into
+            // the first throw.
+            startingTeam = .teamA
+            prepareEnd(starter: .teamA, phase: .throwCochonnet)
+        } else {
+            startingTeam = Bool.random() ? .teamA : .teamB
+            prepareEnd(starter: startingTeam, phase: .coinToss)
+        }
     }
 
     private func prepareEnd(starter: Team, phase newPhase: GamePhase) {
@@ -106,16 +132,19 @@ final class GameViewModel: ObservableObject {
     /// to the field's coordinate space by the caller. `power` is the drag
     /// distance normalized 0...1 (see `GameView`) — a long, fast pull past
     /// `shotPowerThreshold` throws a "shot" instead of a soft "point", and
-    /// also scales how hard that shot's physics impulse lands.
-    func humanThrow(toward aim: CGPoint, power: CGFloat) {
-        guard currentTeam.isHuman else { return }
+    /// also scales how hard that shot's physics impulse lands. `curve` is
+    /// the sideways "effect" (-1...1) read from lateral movement at
+    /// release — only bends "point" throws, matching real petanque where
+    /// effect is used to curve around a blocking boule, not on a flat shot.
+    func humanThrow(toward aim: CGPoint, power: CGFloat, curve: CGFloat) {
+        guard isHumanControlled(currentTeam) else { return }
         let isShot = power > shotPowerThreshold
         soundManager?.haptic(isShot ? .heavy : .light)
-        performThrow(target: aim, isShot: isShot, impulseMagnitude: 260 + power * 260)
+        performThrow(target: aim, isShot: isShot, impulseMagnitude: 260 + power * 260, curve: isShot ? 0 : curve)
     }
 
     private func triggerAITurnIfNeeded() {
-        guard !currentTeam.isHuman, phase == .throwCochonnet || phase == .throwBall else { return }
+        guard isAIControlled(currentTeam), phase == .throwCochonnet || phase == .throwBall else { return }
         isAiThinking = true
         DispatchQueue.main.asyncAfter(deadline: .now() + difficulty.thinkingDelay) { [weak self] in
             guard let self else { return }
@@ -142,11 +171,11 @@ final class GameViewModel: ObservableObject {
                 isShot = opponentClosest != nil
                     && hypot(target.x - opponentClosest!.position.x, target.y - opponentClosest!.position.y) < self.shotImpactRadius * 2
             }
-            self.performThrow(target: target, isShot: isShot, impulseMagnitude: 360 + self.difficulty.accuracy * 120)
+            self.performThrow(target: target, isShot: isShot, impulseMagnitude: 360 + self.difficulty.accuracy * 120, curve: 0)
         }
     }
 
-    private func performThrow(target: CGPoint, isShot: Bool, impulseMagnitude: CGFloat) {
+    private func performThrow(target: CGPoint, isShot: Bool, impulseMagnitude: CGFloat, curve: CGFloat) {
         guard let scene else { return }
         soundManager?.playThrow()
         measurement = nil
@@ -173,7 +202,7 @@ final class GameViewModel: ObservableObject {
         _ = scene.addBallStart(id: ball.id, team: currentTeam)
         // Let the scene lay out the start frame before animating.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.02) {
-            scene.throwBall(id: ball.id, to: target, isShot: isShot, impulseMagnitude: impulseMagnitude)
+            scene.throwBall(id: ball.id, to: target, isShot: isShot, impulseMagnitude: impulseMagnitude, curve: curve)
         }
     }
 
@@ -295,6 +324,15 @@ final class GameViewModel: ObservableObject {
     // MARK: - Turn logic
 
     private func advanceTurn() {
+        if isFreeTraining {
+            if remainingBalls(for: .teamA) <= 0 {
+                endTheEnd()
+            } else {
+                currentTeam = .teamA
+            }
+            return
+        }
+
         let aRemaining = ballsRemaining - (ballsThrown[.teamA] ?? 0)
         let bRemaining = ballsRemaining - (ballsThrown[.teamB] ?? 0)
 
@@ -327,6 +365,14 @@ final class GameViewModel: ObservableObject {
 
     private func endTheEnd() {
         guard let cochonnet else { return }
+
+        if isFreeTraining {
+            lastEndWinner = nil
+            lastEndPoints = 0
+            phase = .endOfEnd
+            return
+        }
+
         let sorted = balls.sorted { $0.distance(to: cochonnet.position) < $1.distance(to: cochonnet.position) }
         guard let leadingTeam = sorted.first?.team else { return }
 

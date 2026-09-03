@@ -36,8 +36,8 @@ struct RootView: View {
             case .newGame:
                 NewGameView(
                     onBack: { withAnimation { screen = .menu } },
-                    onStart: { mode, difficulty, targetScore, terrain in
-                        gameViewModel.startNewGame(mode: mode, difficulty: difficulty, targetScore: targetScore, terrain: terrain)
+                    onStart: { mode, difficulty, targetScore, terrain, matchType in
+                        gameViewModel.startNewGame(mode: mode, difficulty: difficulty, targetScore: targetScore, terrain: terrain, matchType: matchType)
                         withAnimation { screen = .game }
                     }
                 )
