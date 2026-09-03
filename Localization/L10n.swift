@@ -19,7 +19,7 @@ enum L10nKey: String {
     case aboutDescription, aboutRulesTitle
     case rule1, rule2, rule3, rule4
     case website, github
-    case tapToThrow, dragToAim
+    case dragToAim
     case ballsRemaining, cochonnet
     case start
 }
@@ -73,7 +73,6 @@ enum L10n {
         .rule4: "Vence quem chegar primeiro a 13 pontos.",
         .website: "ividi.dev",
         .github: "GitHub",
-        .tapToThrow: "Toca para lançar",
         .dragToAim: "Arrasta para apontar",
         .ballsRemaining: "Bolas restantes",
         .cochonnet: "Cochonnet",
@@ -128,7 +127,6 @@ enum L10n {
         .rule4: "First team to reach 13 points wins.",
         .website: "ividi.dev",
         .github: "GitHub",
-        .tapToThrow: "Tap to throw",
         .dragToAim: "Drag to aim",
         .ballsRemaining: "Balls remaining",
         .cochonnet: "Cochonnet",

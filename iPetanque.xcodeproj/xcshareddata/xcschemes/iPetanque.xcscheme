@@ -39,6 +39,28 @@
          </BuildableReference>
       </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "86822062511086B74D67660F"
+               BuildableName = "iPetanqueTests.xctest"
+               BlueprintName = "iPetanqueTests"
+               ReferencedContainer = "container:iPetanque.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "BC656EDBA35CE23627644893"
+               BuildableName = "iPetanqueUITests.xctest"
+               BlueprintName = "iPetanqueUITests"
+               ReferencedContainer = "container:iPetanque.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <CommandLineArguments>
       </CommandLineArguments>

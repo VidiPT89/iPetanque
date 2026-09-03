@@ -61,6 +61,7 @@ struct NewGameView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                             .shadow(color: Color("PrimaryOrange").opacity(0.35), radius: 12, y: 6)
                     }
+                    .accessibilityIdentifier("newGame.start")
                     .padding(.top, 8)
                 }
                 .padding(.horizontal, 24)
@@ -102,5 +103,6 @@ struct NewGameView: View {
             )
             .foregroundColor(.primary)
         }
+        .accessibilityIdentifier("newGame.mode.\(mode.rawValue)")
     }
 }

@@ -30,7 +30,9 @@ struct GameControlsView: View {
     }
 
     private var hint: String {
-        viewModel.phase == .throwCochonnet ? languageManager.t(.dragToAim) : languageManager.t(.tapToThrow)
+        let isPlayerThrow = viewModel.currentTeam.isHuman
+            && (viewModel.phase == .throwCochonnet || viewModel.phase == .throwBall)
+        return isPlayerThrow ? languageManager.t(.dragToAim) : ""
     }
 
     private func controlButton(icon: String, title: String, action: @escaping () -> Void) -> some View {

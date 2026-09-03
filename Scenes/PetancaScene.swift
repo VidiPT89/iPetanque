@@ -13,10 +13,20 @@ final class PetancaScene: SKScene {
     private var cochonnetNode: SKNode?
     private let circleMarker = SKShapeNode(circleOfRadius: 18)
 
+    /// Tracked independently from `size`: with `scaleMode = .resizeFill`,
+    /// SpriteKit silently mutates `size` on its own render loop whenever the
+    /// view's bounds change, ahead of our own `syncField` call. Comparing
+    /// against `size` directly made the "did the size change?" guard below
+    /// go stale — SpriteKit would already have "caught up" to the new size
+    /// by the time we checked, so the guard saw no change and skipped
+    /// re-laying out the field, leaving the ground texture and throwing
+    /// circle positioned for whatever tiny frame the view had before
+    /// SwiftUI finished its first real layout pass.
+    private var lastLayoutSize: CGSize = .zero
+
     override func didMove(to view: SKView) {
         backgroundColor = SKColor(red: 0.22, green: 0.16, blue: 0.10, alpha: 1.0)
         scaleMode = .resizeFill
-        setupField()
     }
 
     private func setupField() {
@@ -56,7 +66,8 @@ final class PetancaScene: SKScene {
     }
 
     func syncField(size newSize: CGSize) {
-        guard newSize != size, newSize.width > 0, newSize.height > 0 else { return }
+        guard newSize.width > 0, newSize.height > 0, newSize != lastLayoutSize else { return }
+        lastLayoutSize = newSize
         size = newSize
         removeAllChildren()
         ballNodes.removeAll()

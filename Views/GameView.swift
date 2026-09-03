@@ -6,7 +6,11 @@ struct GameView: View {
     @ObservedObject var viewModel: GameViewModel
     var onExit: () -> Void
 
-    @State private var dragTarget: CGPoint?
+    /// `@GestureState` (not `@State`): SwiftUI guarantees this resets to
+    /// `nil` the instant the gesture ends or is cancelled, for any reason —
+    /// no manual cleanup path can be missed, unlike a plain `@State` var
+    /// that only a correctly-firing `.onEnded` closure would reset.
+    @GestureState private var dragTarget: CGPoint?
 
     var body: some View {
         ZStack {
@@ -47,6 +51,7 @@ struct GameView: View {
                 }
             }
             .gesture(throwGesture(in: geo.size))
+            .accessibilityIdentifier("game.field")
         }
     }
 
@@ -77,16 +82,17 @@ struct GameView: View {
 
     private func throwGesture(in size: CGSize) -> some Gesture {
         DragGesture(minimumDistance: 4)
-            .onChanged { value in dragTarget = value.location }
+            .updating($dragTarget) { value, state, _ in
+                guard canThrow else { return }
+                state = value.location
+            }
             .onEnded { value in
-                guard viewModel.currentTeam.isHuman,
-                      viewModel.phase == .throwCochonnet || viewModel.phase == .throwBall else { return }
+                guard canThrow else { return }
                 let scaled = CGPoint(
                     x: value.location.x / size.width * viewModel.fieldSize.width,
                     y: (1 - value.location.y / size.height) * viewModel.fieldSize.height
                 )
                 viewModel.humanThrow(toward: scaled)
-                dragTarget = nil
             }
     }
 
@@ -108,7 +114,9 @@ struct GameView: View {
 
     private var bottomBar: some View {
         VStack(spacing: 12) {
-            TurnIndicatorView(viewModel: viewModel)
+            if viewModel.phase != .coinToss {
+                TurnIndicatorView(viewModel: viewModel)
+            }
             GameControlsView(viewModel: viewModel)
         }
         .padding(.horizontal, 16)

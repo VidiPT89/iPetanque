@@ -33,9 +33,9 @@ struct MainMenuView: View {
             Spacer()
 
             VStack(spacing: 14) {
-                MainMenuButton(title: languageManager.t(.newGame), icon: "play.fill", isPrimary: true, action: onNewGame)
-                MainMenuButton(title: languageManager.t(.settings), icon: "gearshape.fill", action: onSettings)
-                MainMenuButton(title: languageManager.t(.about), icon: "info.circle.fill", action: onAbout)
+                MainMenuButton(title: languageManager.t(.newGame), icon: "play.fill", isPrimary: true, identifier: "menu.newGame", action: onNewGame)
+                MainMenuButton(title: languageManager.t(.settings), icon: "gearshape.fill", identifier: "menu.settings", action: onSettings)
+                MainMenuButton(title: languageManager.t(.about), icon: "info.circle.fill", identifier: "menu.about", action: onAbout)
             }
             .padding(.horizontal, 32)
             .offset(y: appeared ? 0 : 24)

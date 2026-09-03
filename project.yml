@@ -39,7 +39,10 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: dev.ividi.petanca
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         TARGETED_DEVICE_FAMILY: "1,2"
-    scheme: {}
+    scheme:
+      testTargets:
+        - iPetanqueTests
+        - iPetanqueUITests
   iPetanqueTests:
     type: bundle.unit-test
     platform: iOS
@@ -50,3 +53,16 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.ividi.petanca.tests
+        GENERATE_INFOPLIST_FILE: YES
+  iPetanqueUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: iPetanqueUITests
+    dependencies:
+      - target: iPetanque
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.ividi.petanca.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: iPetanque

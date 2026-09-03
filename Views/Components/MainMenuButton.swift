@@ -4,6 +4,7 @@ struct MainMenuButton: View {
     let title: String
     let icon: String
     var isPrimary: Bool = false
+    var identifier: String? = nil
     let action: () -> Void
 
     @State private var isPressed = false
@@ -49,5 +50,6 @@ struct MainMenuButton: View {
                 .onChanged { _ in isPressed = true }
                 .onEnded { _ in isPressed = false }
         )
+        .accessibilityIdentifier(identifier ?? "")
     }
 }
