@@ -38,10 +38,41 @@ struct GameView: View {
 
     private var fieldLayer: some View {
         GeometryReader { geo in
-            PetancaFieldView(viewModel: viewModel)
-                .ignoresSafeArea()
-                .gesture(throwGesture(in: geo.size))
+            ZStack {
+                PetancaFieldView(viewModel: viewModel)
+                    .ignoresSafeArea()
+
+                if let dragTarget, canThrow {
+                    aimOverlay(to: dragTarget, in: geo.size)
+                }
+            }
+            .gesture(throwGesture(in: geo.size))
         }
+    }
+
+    private var canThrow: Bool {
+        viewModel.currentTeam.isHuman && (viewModel.phase == .throwCochonnet || viewModel.phase == .throwBall)
+    }
+
+    private func aimOverlay(to point: CGPoint, in size: CGSize) -> some View {
+        let origin = CGPoint(x: size.width / 2, y: size.height * 0.92)
+        return ZStack {
+            Path { path in
+                path.move(to: origin)
+                path.addLine(to: point)
+            }
+            .stroke(
+                LinearGradient(colors: [Color("PrimaryOrange").opacity(0.05), Color("BurntYellow").opacity(0.85)], startPoint: .bottom, endPoint: .top),
+                style: StrokeStyle(lineWidth: 3, lineCap: .round, dash: [2, 10])
+            )
+
+            Circle()
+                .fill(Color("PrimaryOrange"))
+                .frame(width: 14, height: 14)
+                .shadow(color: Color("PrimaryOrange").opacity(0.7), radius: 8)
+                .position(point)
+        }
+        .allowsHitTesting(false)
     }
 
     private func throwGesture(in size: CGSize) -> some Gesture {

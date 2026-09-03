@@ -30,6 +30,7 @@
 		9C6129EBCB5ECA91176D78E3 /* MainMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27FED9D922A0687FEB57B0CC /* MainMenuView.swift */; };
 		A06A58F033F178E320D9F8D1 /* Cochonnet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E03695C811D7C70011F90D /* Cochonnet.swift */; };
 		C519001765004D24D4E392AB /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511C5AD3866C1A5FE123E692 /* SettingsView.swift */; };
+		D07E8BCC09E9EB6872D0DCB6 /* PetancaTextures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C49CCA0D6BA18504F6FE2EC /* PetancaTextures.swift */; };
 		D168734839ECCB8F0976E19B /* GameControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C8BFDB09DF416AC71D9B2E /* GameControlsView.swift */; };
 		D403F48DECA2947579E23FAC /* AIOpponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61A9F128121E4C2B127D9690 /* AIOpponent.swift */; };
 		DEC2C4F41E551F213905C155 /* PetancaScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C9EFAEF50ECBAA3A9D2335E /* PetancaScene.swift */; };
@@ -48,6 +49,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0C49CCA0D6BA18504F6FE2EC /* PetancaTextures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetancaTextures.swift; sourceTree = "<group>"; };
 		0C9EFAEF50ECBAA3A9D2335E /* PetancaScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetancaScene.swift; sourceTree = "<group>"; };
 		0E4F3FDBD61CFE5188FDF80D /* GameMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameMode.swift; sourceTree = "<group>"; };
 		0FD3E37E55B6E9CAEEE5962D /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
@@ -134,6 +136,7 @@
 			isa = PBXGroup;
 			children = (
 				0C9EFAEF50ECBAA3A9D2335E /* PetancaScene.swift */,
+				0C49CCA0D6BA18504F6FE2EC /* PetancaTextures.swift */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -332,6 +335,7 @@
 				1ECB7A2C483F68B8140CE90D /* PetancaFieldView.swift in Sources */,
 				3CFF6834CB18AA40F0381056 /* PetancaGameApp.swift in Sources */,
 				DEC2C4F41E551F213905C155 /* PetancaScene.swift in Sources */,
+				D07E8BCC09E9EB6872D0DCB6 /* PetancaTextures.swift in Sources */,
 				8AA89CA4427DE4F6F99942CC /* RootView.swift in Sources */,
 				0014C034C53597A00EE84A0D /* ScoreBoardView.swift in Sources */,
 				C519001765004D24D4E392AB /* SettingsView.swift in Sources */,

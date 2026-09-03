@@ -6,12 +6,23 @@ struct GameControlsView: View {
 
     var body: some View {
         HStack(spacing: 16) {
-            controlButton(icon: "arrow.uturn.backward", title: languageManager.t(.undo)) {}
-            controlButton(icon: "ruler", title: languageManager.t(.measureDistance)) {}
+            controlButton(icon: "arrow.uturn.backward", title: languageManager.t(.undo)) {
+                viewModel.undoLastMove()
+            }
+            .opacity(viewModel.canUndo ? 1 : 0.35)
+            .disabled(!viewModel.canUndo)
+
+            controlButton(icon: "ruler", title: languageManager.t(.measureDistance)) {
+                viewModel.measureClosest()
+            }
+            .disabled(viewModel.cochonnet == nil)
+
             Spacer()
-            Text(hint)
+
+            Text(viewModel.measurement ?? hint)
                 .font(.system(size: 12, weight: .medium))
-                .foregroundColor(.secondary)
+                .foregroundColor(viewModel.measurement != nil ? Color("PrimaryOrange") : .secondary)
+                .animation(.easeInOut(duration: 0.2), value: viewModel.measurement)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)

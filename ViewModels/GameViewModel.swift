@@ -24,15 +24,30 @@ final class GameViewModel: ObservableObject {
     @Published var lastEndPoints = 0
     @Published var winner: Team?
     @Published var isAiThinking = false
+    @Published var measurement: String?
 
     weak var scene: PetancaScene?
     var soundManager: SoundManager?
 
-    let fieldSize = CGSize(width: 340, height: 760)
+    /// Kept in sync with the SKView's real bounds (see `PetancaFieldView`) so
+    /// throw targets, AI aim and on-screen drag coordinates all agree on the
+    /// same coordinate space. The initial value is only a placeholder used
+    /// for the very first frame before layout happens.
+    var fieldSize = CGSize(width: 340, height: 760)
     let targetScore = 13
 
     private var ballsThrown: [Team: Int] = [.teamA: 0, .teamB: 0]
-    private var pendingBallID: UUID?
+    private var measurementWorkItem: DispatchWorkItem?
+
+    private enum Move {
+        case cochonnet
+        case ball(id: UUID, team: Team)
+    }
+    private var history: [Move] = []
+
+    var canUndo: Bool {
+        !history.isEmpty && (phase == .throwBall || phase == .throwCochonnet)
+    }
 
     var ballsRemaining: Int { mode.playersPerTeam * mode.ballsPerPlayer }
 
@@ -52,6 +67,8 @@ final class GameViewModel: ObservableObject {
         ballsThrown = [.teamA: 0, .teamB: 0]
         currentTeam = starter
         phase = newPhase
+        history = []
+        measurement = nil
     }
 
     func confirmCoinToss() {
@@ -65,6 +82,7 @@ final class GameViewModel: ObservableObject {
     /// to the field's coordinate space by the caller.
     func humanThrow(toward aim: CGPoint) {
         guard currentTeam.isHuman else { return }
+        soundManager?.haptic(.light)
         performThrow(target: aim)
     }
 
@@ -98,20 +116,58 @@ final class GameViewModel: ObservableObject {
     private func performThrow(target: CGPoint) {
         guard let scene else { return }
         soundManager?.playThrow()
+        measurement = nil
 
         if phase == .throwCochonnet {
+            history.append(.cochonnet)
             scene.throwCochonnet(to: target)
             return
         }
 
         let ball = Ball(team: currentTeam, position: .zero)
-        pendingBallID = ball.id
+        history.append(.ball(id: ball.id, team: currentTeam))
         balls.append(ball)
         _ = scene.addBallStart(id: ball.id, team: currentTeam)
         // Let the scene lay out the start frame before animating.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.02) {
             scene.throwBall(id: ball.id, to: target)
         }
+    }
+
+    // MARK: - Undo & measure
+
+    func undoLastMove() {
+        guard canUndo, let last = history.popLast() else { return }
+        switch last {
+        case .cochonnet:
+            cochonnet = nil
+            phase = .throwCochonnet
+            scene?.removeCochonnet()
+        case .ball(let id, let team):
+            balls.removeAll { $0.id == id }
+            ballsThrown[team, default: 0] -= 1
+            currentTeam = team
+            phase = .throwBall
+            scene?.removeBall(id: id)
+        }
+        measurement = nil
+        soundManager?.haptic(.rigid)
+    }
+
+    func measureClosest() {
+        guard let cochonnet, let closest = balls.filter({ $0.isThrown }).min(by: { $0.distance(to: cochonnet.position) < $1.distance(to: cochonnet.position) }) else {
+            measurement = nil
+            return
+        }
+        // Cosmetic conversion: the play area maps to roughly a 10m throwing
+        // stretch, so distances read as plausible on-field measurements.
+        let metersPerPoint = 10.0 / Double(fieldSize.height * 0.85)
+        let meters = Double(closest.distance(to: cochonnet.position)) * metersPerPoint
+        measurement = String(format: "%.2f m", meters)
+        measurementWorkItem?.cancel()
+        let workItem = DispatchWorkItem { [weak self] in self?.measurement = nil }
+        measurementWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5, execute: workItem)
     }
 
     // MARK: - Scene callbacks
