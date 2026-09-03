@@ -1,13 +1,31 @@
 import SpriteKit
 
-/// Renders the petanque field and animates throws. Landing positions are
-/// decided by the view model (so scoring math is deterministic); this scene
-/// is purely responsible for making the throw *look* physical: an eased
-/// arc, a rolling spin, a soft bounce, a puff of dust and, for the AI, a
-/// visible wind-up.
+private enum PhysicsCategory {
+    static let ball: UInt32 = 1 << 0
+    static let cochonnet: UInt32 = 1 << 1
+    static let wall: UInt32 = 1 << 2
+}
+
+/// Renders the petanque field and animates throws. The initial flight of a
+/// thrown boule is always a deterministic `SKAction` arc to the target the
+/// view model computed (so landing positions — and scoring — never depend
+/// on physics timing). Real `SKPhysicsBody` collisions only kick in
+/// afterwards, for "shot" (tirer) throws: once the shooter boule arrives,
+/// it gets a real impulse and can elastically knock already-landed boules
+/// (which all carry a resting physics body) out of the way, exactly like
+/// official petanque's two throw styles.
 final class PetancaScene: SKScene {
     var onBallLanded: ((UUID, CGPoint) -> Void)?
     var onCochonnetLanded: ((CGPoint) -> Void)?
+    /// Fired once a "shot" throw's physics has settled, with the *actual*
+    /// final position of every ball still on the board plus the cochonnet
+    /// (if present) — the view model reconciles its own model against this,
+    /// since a real collision can move boules the shooter never directly
+    /// aimed at.
+    var onBoardSettled: (([UUID: CGPoint], CGPoint?) -> Void)?
+
+    var terrain: Terrain = .hardDirt
+    var ballAccent: BallAccent = .silver
 
     private var ballNodes: [UUID: SKNode] = [:]
     private var cochonnetNode: SKNode?
@@ -27,26 +45,32 @@ final class PetancaScene: SKScene {
     override func didMove(to view: SKView) {
         backgroundColor = SKColor(red: 0.22, green: 0.16, blue: 0.10, alpha: 1.0)
         scaleMode = .resizeFill
+        physicsWorld.gravity = .zero
     }
 
     private func setupField() {
         guard size.width > 0, size.height > 0 else { return }
 
-        let ground = SKSpriteNode(texture: SKTexture(image: PetancaTextures.groundTexture(size: size)))
+        let ground = SKSpriteNode(texture: SKTexture(image: PetancaTextures.groundTexture(size: size, terrain: terrain)))
         ground.position = CGPoint(x: size.width / 2, y: size.height / 2)
         ground.size = size
         ground.zPosition = -10
         addChild(ground)
 
         // Court boundary, inset slightly from the screen edges, echoing the
-        // real 4m x 15m rectangle.
+        // real 4m x 15m rectangle. Also a real physics wall, so a hard shot
+        // can't send a boule flying off past the visible field.
         let inset: CGFloat = 14
-        let court = SKShapeNode(rectOf: CGSize(width: size.width - inset * 2, height: size.height - inset * 2), cornerRadius: 6)
-        court.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        let courtRect = CGRect(x: inset, y: inset, width: size.width - inset * 2, height: size.height - inset * 2)
+        let court = SKShapeNode(rect: courtRect, cornerRadius: 6)
+        court.position = .zero
         court.strokeColor = SKColor.white.withAlphaComponent(0.14)
         court.lineWidth = 1.5
         court.fillColor = .clear
         court.zPosition = -8
+        court.physicsBody = SKPhysicsBody(edgeLoopFrom: courtRect)
+        court.physicsBody?.categoryBitMask = PhysicsCategory.wall
+        court.physicsBody?.friction = 0.3
         addChild(court)
 
         circleMarker.position = CGPoint(x: size.width / 2, y: size.height * 0.08)
@@ -96,6 +120,7 @@ final class PetancaScene: SKScene {
 
         animateThrow(node: node, to: target, isShot: false) { [weak self] in
             self?.spawnDust(at: target, tint: SKColor(red: 0.97, green: 0.77, blue: 0.28, alpha: 0.5))
+            self?.attachPhysics(to: node, category: PhysicsCategory.cochonnet, radius: 6, mass: 0.35)
             self?.onCochonnetLanded?(target)
         }
     }
@@ -133,12 +158,28 @@ final class PetancaScene: SKScene {
         return start
     }
 
-    func throwBall(id: UUID, to target: CGPoint, isShot: Bool) {
+    /// `impulseMagnitude` only matters when `isShot` is true — it scales
+    /// the real physics impulse applied on arrival, so a harder pull (or a
+    /// tougher AI) genuinely knocks boules further, not just cosmetically.
+    func throwBall(id: UUID, to target: CGPoint, isShot: Bool, impulseMagnitude: CGFloat) {
         guard let node = ballNodes[id] else { return }
+        let origin = node.position
         animateThrow(node: node, to: target, isShot: isShot) { [weak self] in
-            self?.spawnDust(at: target, tint: SKColor.white.withAlphaComponent(0.4))
-            if isShot { self?.shake() }
-            self?.onBallLanded?(id, target)
+            guard let self else { return }
+            self.spawnDust(at: target, tint: SKColor.white.withAlphaComponent(0.4))
+            self.attachPhysics(to: node, category: PhysicsCategory.ball, radius: 9, mass: 1.0)
+
+            if isShot {
+                self.shake()
+                let dx = target.x - origin.x
+                let dy = target.y - origin.y
+                let length = max(hypot(dx, dy), 1)
+                let impulse = CGVector(dx: dx / length * impulseMagnitude, dy: dy / length * impulseMagnitude)
+                node.physicsBody?.applyImpulse(impulse)
+                self.scheduleSettleReport()
+            } else {
+                self.onBallLanded?(id, target)
+            }
         }
     }
 
@@ -147,27 +188,42 @@ final class PetancaScene: SKScene {
         ballNodes[id] = nil
     }
 
-    /// A short, snappy knock — used when a "shot" throw sends another
-    /// boule (or the cochonnet) skidding away from the impact point.
-    private func knock(node: SKNode, to target: CGPoint) {
-        let move = SKAction.move(to: target, duration: 0.22)
-        move.timingMode = .easeOut
-        let bounce = SKAction.sequence([
-            SKAction.scale(to: 1.15, duration: 0.06),
-            SKAction.scale(to: 1.0, duration: 0.1),
-        ])
-        node.run(SKAction.group([move, bounce]))
-        spawnDust(at: target, tint: SKColor.white.withAlphaComponent(0.3))
+    /// Gives a landed node a real, resting physics body so a *later* shot
+    /// can collide with it elastically. Zero initial velocity means it just
+    /// sits exactly where the deterministic throw animation left it — no
+    /// visual difference from before for a plain "point" throw.
+    private func attachPhysics(to node: SKNode, category: UInt32, radius: CGFloat, mass: CGFloat) {
+        let body = SKPhysicsBody(circleOfRadius: radius)
+        body.categoryBitMask = category
+        body.collisionBitMask = PhysicsCategory.ball | PhysicsCategory.cochonnet | PhysicsCategory.wall
+        body.contactTestBitMask = 0
+        body.mass = mass
+        body.friction = terrain.friction
+        body.restitution = terrain.restitution
+        body.linearDamping = 4.5
+        body.angularDamping = 4.5
+        body.allowsRotation = true
+        body.affectedByGravity = false
+        node.physicsBody = body
     }
 
-    func knockBall(id: UUID, to target: CGPoint) {
-        guard let node = ballNodes[id] else { return }
-        knock(node: node, to: target)
-    }
-
-    func knockCochonnet(to target: CGPoint) {
-        guard let node = cochonnetNode else { return }
-        knock(node: node, to: target)
+    /// After a shot's impulse, wait for the physics simulation to settle
+    /// (high damping means it's essentially still well within this window)
+    /// then report every ball's — and the cochonnet's — *actual* final
+    /// position, since a real collision can move boules the shooter never
+    /// directly targeted.
+    private func scheduleSettleReport() {
+        run(SKAction.sequence([
+            SKAction.wait(forDuration: 0.7),
+            SKAction.run { [weak self] in
+                guard let self else { return }
+                var positions: [UUID: CGPoint] = [:]
+                for (id, node) in self.ballNodes {
+                    positions[id] = node.position
+                }
+                self.onBoardSettled?(positions, self.cochonnetNode?.position)
+            },
+        ]))
     }
 
     private func shake() {
@@ -182,7 +238,8 @@ final class PetancaScene: SKScene {
 
     private func makeBallNode(team: Team) -> SKNode {
         let container = SKNode()
-        let sprite = SKSpriteNode(texture: SKTexture(image: PetancaTextures.ballTexture(team: team)))
+        let accent = team == .teamA ? ballAccent : .silver
+        let sprite = SKSpriteNode(texture: SKTexture(image: PetancaTextures.ballTexture(team: team, accent: accent)))
         sprite.size = CGSize(width: 22, height: 22)
         container.addChild(sprite)
 

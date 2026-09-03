@@ -3,11 +3,19 @@ import SwiftUI
 struct NewGameView: View {
     @EnvironmentObject var languageManager: LanguageManager
     var onBack: () -> Void
-    var onStart: (GameMode, Difficulty, Int) -> Void
+    var onStart: (GameMode, Difficulty, Int, Terrain) -> Void
 
     @State private var selectedMode: GameMode = .singles
     @AppStorage("difficulty") private var difficultyRaw = Difficulty.medium.rawValue
     @AppStorage("targetScore") private var targetScore = 13
+    @AppStorage("terrain") private var terrainRaw = Terrain.hardDirt.rawValue
+
+    private var selectedTerrain: Binding<Terrain> {
+        Binding(
+            get: { Terrain(rawValue: terrainRaw) ?? .hardDirt },
+            set: { terrainRaw = $0.rawValue }
+        )
+    }
 
     private var selectedDifficulty: Binding<Difficulty> {
         Binding(
@@ -59,8 +67,19 @@ struct NewGameView: View {
                         .pickerStyle(.segmented)
                     }
 
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text(languageManager.t(.terrain))
+                            .font(.system(size: 18, weight: .semibold, design: .rounded))
+                        Picker("", selection: selectedTerrain) {
+                            ForEach(Terrain.allCases) { t in
+                                Label(languageManager.t(t.titleKey), systemImage: t.icon).tag(t)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                    }
+
                     Button {
-                        onStart(selectedMode, selectedDifficulty.wrappedValue, targetScore)
+                        onStart(selectedMode, selectedDifficulty.wrappedValue, targetScore, selectedTerrain.wrappedValue)
                     } label: {
                         Text(languageManager.t(.start))
                             .font(.system(size: 18, weight: .bold, design: .rounded))

@@ -15,6 +15,9 @@ struct PetancaFieldView: UIViewRepresentable {
         scene.onCochonnetLanded = { point in
             DispatchQueue.main.async { viewModel.cochonnetDidLand(at: point) }
         }
+        scene.onBoardSettled = { positions, cochonnetPosition in
+            DispatchQueue.main.async { viewModel.boardDidSettle(positions: positions, cochonnetPosition: cochonnetPosition) }
+        }
         view.presentScene(scene)
         viewModel.scene = scene
         return view
@@ -22,6 +25,8 @@ struct PetancaFieldView: UIViewRepresentable {
 
     func updateUIView(_ uiView: SKView, context: Context) {
         guard let scene = uiView.scene as? PetancaScene else { return }
+        scene.terrain = viewModel.terrain
+        scene.ballAccent = viewModel.ballAccent
         scene.syncField(size: uiView.bounds.size)
         if viewModel.fieldSize != uiView.bounds.size, uiView.bounds.width > 0, uiView.bounds.height > 0 {
             viewModel.fieldSize = uiView.bounds.size

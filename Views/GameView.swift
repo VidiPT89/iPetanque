@@ -216,7 +216,7 @@ struct GameView: View {
 
                     HStack(spacing: 14) {
                         Button {
-                            viewModel.startNewGame(mode: viewModel.mode, difficulty: viewModel.difficulty, targetScore: viewModel.targetScore)
+                            viewModel.startNewGame(mode: viewModel.mode, difficulty: viewModel.difficulty, targetScore: viewModel.targetScore, terrain: viewModel.terrain)
                         } label: {
                             Text(languageManager.t(.playAgain))
                                 .font(.system(size: 15, weight: .bold))

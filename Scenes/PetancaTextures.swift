@@ -5,22 +5,38 @@ import UIKit
 /// bundled image assets. Results are cached since the same handful of
 /// textures are reused for every ball on the field.
 enum PetancaTextures {
-    private static var ballCache: [Team: UIImage] = [:]
+    private static var ballCache: [String: UIImage] = [:]
     private static var cochonnetCache: UIImage?
     private static var groundCache: [String: UIImage] = [:]
 
-    static func ballTexture(team: Team) -> UIImage {
-        if let cached = ballCache[team] { return cached }
+    static func ballTexture(team: Team, accent: BallAccent = .silver) -> UIImage {
+        let cacheKey = "\(team.rawValue)-\(accent.rawValue)"
+        if let cached = ballCache[cacheKey] { return cached }
 
         let size = CGSize(width: 88, height: 88)
         let image = UIGraphicsImageRenderer(size: size).image { ctx in
             let rect = CGRect(origin: .zero, size: size).insetBy(dx: 4, dy: 4)
-            let base: [UIColor]
+            var base: [UIColor]
             switch team {
             case .teamA:
                 base = [UIColor(white: 0.92, alpha: 1), UIColor(white: 0.72, alpha: 1), UIColor(white: 0.42, alpha: 1)]
             case .teamB:
                 base = [UIColor(red: 0.72, green: 0.50, blue: 0.28, alpha: 1), UIColor(red: 0.50, green: 0.32, blue: 0.16, alpha: 1), UIColor(red: 0.28, green: 0.16, blue: 0.08, alpha: 1)]
+            }
+            // Only the human player's own boules (team A) can be
+            // recolored; blend the accent hue into the metallic gradient
+            // rather than replacing it, so the reflections still read.
+            if team == .teamA, let tint = accent.tint {
+                base = base.map { color in
+                    var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+                    color.getRed(&r, green: &g, blue: &b, alpha: &a)
+                    return UIColor(
+                        red: r * 0.35 + tint.0 * 0.65,
+                        green: g * 0.35 + tint.1 * 0.65,
+                        blue: b * 0.35 + tint.2 * 0.65,
+                        alpha: a
+                    )
+                }
             }
 
             let cg = ctx.cgContext
@@ -73,7 +89,7 @@ enum PetancaTextures {
             cg.setLineWidth(1)
             cg.strokeEllipse(in: rect)
         }
-        ballCache[team] = image
+        ballCache[cacheKey] = image
         return image
     }
 
@@ -109,17 +125,19 @@ enum PetancaTextures {
         return image
     }
 
-    static func groundTexture(size: CGSize) -> UIImage {
-        let key = "\(Int(size.width))x\(Int(size.height))"
+    static func groundTexture(size: CGSize, terrain: Terrain = .hardDirt) -> UIImage {
+        let key = "\(Int(size.width))x\(Int(size.height))-\(terrain.rawValue)"
         if let cached = groundCache[key] { return cached }
 
         let image = UIGraphicsImageRenderer(size: size).image { ctx in
             let rect = CGRect(origin: .zero, size: size)
             let cg = ctx.cgContext
 
+            let top = terrain.baseColor.top
+            let bottom = terrain.baseColor.bottom
             let colors = [
-                UIColor(red: 0.36, green: 0.27, blue: 0.17, alpha: 1).cgColor,
-                UIColor(red: 0.27, green: 0.19, blue: 0.11, alpha: 1).cgColor,
+                UIColor(red: top.0, green: top.1, blue: top.2, alpha: 1).cgColor,
+                UIColor(red: bottom.0, green: bottom.1, blue: bottom.2, alpha: 1).cgColor,
             ] as CFArray
             let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: colors, locations: [0, 1])!
             cg.drawLinearGradient(gradient, start: CGPoint(x: 0, y: 0), end: CGPoint(x: 0, y: rect.height), options: [])

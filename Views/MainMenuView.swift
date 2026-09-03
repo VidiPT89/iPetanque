@@ -6,6 +6,8 @@ struct MainMenuView: View {
     var onNewGame: () -> Void
     var onSettings: () -> Void
     var onAbout: () -> Void
+    var onAchievements: () -> Void
+    var onStatistics: () -> Void
 
     @State private var appeared = false
 
@@ -36,6 +38,11 @@ struct MainMenuView: View {
                 MainMenuButton(title: languageManager.t(.newGame), icon: "play.fill", isPrimary: true, identifier: "menu.newGame", action: onNewGame)
                 MainMenuButton(title: languageManager.t(.settings), icon: "gearshape.fill", identifier: "menu.settings", action: onSettings)
                 MainMenuButton(title: languageManager.t(.about), icon: "info.circle.fill", identifier: "menu.about", action: onAbout)
+
+                HStack(spacing: 14) {
+                    secondaryButton(title: languageManager.t(.achievements), icon: "trophy.fill", action: onAchievements)
+                    secondaryButton(title: languageManager.t(.statistics), icon: "chart.bar.fill", action: onStatistics)
+                }
             }
             .padding(.horizontal, 32)
             .offset(y: appeared ? 0 : 24)
@@ -61,6 +68,21 @@ struct MainMenuView: View {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.75)) {
                 appeared = true
             }
+        }
+    }
+
+    private func secondaryButton(title: String, icon: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 6) {
+                Image(systemName: icon)
+                    .font(.system(size: 18, weight: .semibold))
+                Text(title)
+                    .font(.system(size: 12, weight: .semibold))
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(.ultraThinMaterial))
+            .foregroundColor(.primary)
         }
     }
 }

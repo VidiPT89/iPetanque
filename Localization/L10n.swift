@@ -23,6 +23,16 @@ enum L10nKey: String {
     case ballsRemaining, cochonnet
     case start
     case shotMode, targetScoreLabel
+    case terrain, terrainGrass, terrainHardDirt, terrainGravel
+    case achievements, statistics
+    case gamesPlayed, gamesWon, winRate, shotsTaken, pointsTaken, perfectShot
+    case achievementFirstWin, achievementFirstWinDesc
+    case achievementShutout, achievementShutoutDesc
+    case achievementStreak5, achievementStreak5Desc
+    case achievementSharpshooter, achievementSharpshooterDesc
+    case achievementCarreau, achievementCarreauDesc
+    case locked, unlocked, resetStats, resetStatsConfirm, cancel
+    case ballColor, noAchievementsYet
 }
 
 enum L10n {
@@ -80,6 +90,35 @@ enum L10n {
         .start: "Começar",
         .shotMode: "TIRAR",
         .targetScoreLabel: "Pontuação Alvo",
+        .terrain: "Terreno",
+        .terrainGrass: "Relva",
+        .terrainHardDirt: "Terra Batida",
+        .terrainGravel: "Gravilha",
+        .achievements: "Conquistas",
+        .statistics: "Estatísticas",
+        .gamesPlayed: "Jogos",
+        .gamesWon: "Vitórias",
+        .winRate: "% Vitórias",
+        .shotsTaken: "Tiradas",
+        .pointsTaken: "Apontadas",
+        .perfectShot: "Carreau Perfeito",
+        .achievementFirstWin: "Primeira Vitória",
+        .achievementFirstWinDesc: "Ganha o teu primeiro jogo",
+        .achievementShutout: "Vitória Impecável",
+        .achievementShutoutDesc: "Vence por 13 a 0",
+        .achievementStreak5: "Em Grande",
+        .achievementStreak5Desc: "5 vitórias seguidas",
+        .achievementSharpshooter: "Atirador Certeiro",
+        .achievementSharpshooterDesc: "10 tiradas bem-sucedidas",
+        .achievementCarreau: "Carreau!",
+        .achievementCarreauDesc: "Uma bola tirada fica a menos de 3 cm do cochonnet",
+        .locked: "Por desbloquear",
+        .unlocked: "Desbloqueada",
+        .resetStats: "Repor Estatísticas",
+        .resetStatsConfirm: "Isto apaga todas as estatísticas e conquistas. Não pode ser desfeito.",
+        .cancel: "Cancelar",
+        .ballColor: "Cor das Bolas",
+        .noAchievementsYet: "Ainda sem conquistas — joga uma partida!",
     ]
 
     private static let en: [L10nKey: String] = [
@@ -136,6 +175,35 @@ enum L10n {
         .start: "Start",
         .shotMode: "SHOT",
         .targetScoreLabel: "Target Score",
+        .terrain: "Terrain",
+        .terrainGrass: "Grass",
+        .terrainHardDirt: "Hard Dirt",
+        .terrainGravel: "Gravel",
+        .achievements: "Achievements",
+        .statistics: "Statistics",
+        .gamesPlayed: "Games",
+        .gamesWon: "Wins",
+        .winRate: "Win Rate",
+        .shotsTaken: "Shots",
+        .pointsTaken: "Points",
+        .perfectShot: "Perfect Carreau",
+        .achievementFirstWin: "First Win",
+        .achievementFirstWinDesc: "Win your first game",
+        .achievementShutout: "Flawless Victory",
+        .achievementShutoutDesc: "Win 13-0",
+        .achievementStreak5: "On a Roll",
+        .achievementStreak5Desc: "5 wins in a row",
+        .achievementSharpshooter: "Sharpshooter",
+        .achievementSharpshooterDesc: "10 successful shots",
+        .achievementCarreau: "Carreau!",
+        .achievementCarreauDesc: "A shot lands within 3cm of the cochonnet",
+        .locked: "Locked",
+        .unlocked: "Unlocked",
+        .resetStats: "Reset Statistics",
+        .resetStatsConfirm: "This clears all statistics and achievements. This cannot be undone.",
+        .cancel: "Cancel",
+        .ballColor: "Ball Color",
+        .noAchievementsYet: "No achievements yet — play a match!",
     ]
 
     static func string(_ key: L10nKey, language: AppLanguage) -> String {
