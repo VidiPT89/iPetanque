@@ -59,25 +59,64 @@ struct GameView: View {
         viewModel.currentTeam.isHuman && (viewModel.phase == .throwCochonnet || viewModel.phase == .throwBall)
     }
 
+    /// Drag distance normalized against a reference "full pull" length, so
+    /// the power meter and the shot/point decision agree on the same 0...1
+    /// scale regardless of screen size.
+    private func power(for point: CGPoint, origin: CGPoint, in size: CGSize) -> CGFloat {
+        let reference = size.height * 0.5
+        let pulled = hypot(point.x - origin.x, point.y - origin.y)
+        return min(pulled / reference, 1.0)
+    }
+
+    private func powerColor(_ power: CGFloat) -> Color {
+        if power > 0.62 { return Color.red }
+        if power > 0.35 { return Color("BurntYellow") }
+        return Color("PrimaryOrange")
+    }
+
     private func aimOverlay(to point: CGPoint, in size: CGSize) -> some View {
         let origin = CGPoint(x: size.width / 2, y: size.height * 0.92)
+        let power = power(for: point, origin: origin, in: size)
+        let color = powerColor(power)
+        let isShot = power > 0.62
+
         return ZStack {
             Path { path in
                 path.move(to: origin)
                 path.addLine(to: point)
             }
             .stroke(
-                LinearGradient(colors: [Color("PrimaryOrange").opacity(0.05), Color("BurntYellow").opacity(0.85)], startPoint: .bottom, endPoint: .top),
+                LinearGradient(colors: [color.opacity(0.05), color.opacity(0.9)], startPoint: .bottom, endPoint: .top),
                 style: StrokeStyle(lineWidth: 3, lineCap: .round, dash: [2, 10])
             )
 
             Circle()
-                .fill(Color("PrimaryOrange"))
+                .fill(color)
                 .frame(width: 14, height: 14)
-                .shadow(color: Color("PrimaryOrange").opacity(0.7), radius: 8)
+                .shadow(color: color.opacity(0.7), radius: 8)
                 .position(point)
+
+            powerMeter(power: power, isShot: isShot, color: color)
+                .position(x: size.width / 2, y: size.height * 0.98)
         }
         .allowsHitTesting(false)
+    }
+
+    private func powerMeter(power: CGFloat, isShot: Bool, color: Color) -> some View {
+        VStack(spacing: 4) {
+            if isShot {
+                Text(languageManager.t(.shotMode))
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundColor(.red)
+            }
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule().fill(Color.white.opacity(0.15))
+                    Capsule().fill(color).frame(width: geo.size.width * power)
+                }
+            }
+            .frame(width: 130, height: 6)
+        }
     }
 
     private func throwGesture(in size: CGSize) -> some Gesture {
@@ -88,11 +127,13 @@ struct GameView: View {
             }
             .onEnded { value in
                 guard canThrow else { return }
+                let origin = CGPoint(x: size.width / 2, y: size.height * 0.92)
+                let power = power(for: value.location, origin: origin, in: size)
                 let scaled = CGPoint(
                     x: value.location.x / size.width * viewModel.fieldSize.width,
                     y: (1 - value.location.y / size.height) * viewModel.fieldSize.height
                 )
-                viewModel.humanThrow(toward: scaled)
+                viewModel.humanThrow(toward: scaled, power: power)
             }
     }
 
@@ -175,7 +216,7 @@ struct GameView: View {
 
                     HStack(spacing: 14) {
                         Button {
-                            viewModel.startNewGame(mode: viewModel.mode, difficulty: viewModel.difficulty)
+                            viewModel.startNewGame(mode: viewModel.mode, difficulty: viewModel.difficulty, targetScore: viewModel.targetScore)
                         } label: {
                             Text(languageManager.t(.playAgain))
                                 .font(.system(size: 15, weight: .bold))

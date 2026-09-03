@@ -94,7 +94,7 @@ final class PetancaScene: SKScene {
         glow.blendMode = .add
         node.addChild(glow)
 
-        animateThrow(node: node, to: target) { [weak self] in
+        animateThrow(node: node, to: target, isShot: false) { [weak self] in
             self?.spawnDust(at: target, tint: SKColor(red: 0.97, green: 0.77, blue: 0.28, alpha: 0.5))
             self?.onCochonnetLanded?(target)
         }
@@ -133,10 +133,11 @@ final class PetancaScene: SKScene {
         return start
     }
 
-    func throwBall(id: UUID, to target: CGPoint) {
+    func throwBall(id: UUID, to target: CGPoint, isShot: Bool) {
         guard let node = ballNodes[id] else { return }
-        animateThrow(node: node, to: target) { [weak self] in
+        animateThrow(node: node, to: target, isShot: isShot) { [weak self] in
             self?.spawnDust(at: target, tint: SKColor.white.withAlphaComponent(0.4))
+            if isShot { self?.shake() }
             self?.onBallLanded?(id, target)
         }
     }
@@ -144,6 +145,39 @@ final class PetancaScene: SKScene {
     func removeBall(id: UUID) {
         ballNodes[id]?.removeFromParent()
         ballNodes[id] = nil
+    }
+
+    /// A short, snappy knock — used when a "shot" throw sends another
+    /// boule (or the cochonnet) skidding away from the impact point.
+    private func knock(node: SKNode, to target: CGPoint) {
+        let move = SKAction.move(to: target, duration: 0.22)
+        move.timingMode = .easeOut
+        let bounce = SKAction.sequence([
+            SKAction.scale(to: 1.15, duration: 0.06),
+            SKAction.scale(to: 1.0, duration: 0.1),
+        ])
+        node.run(SKAction.group([move, bounce]))
+        spawnDust(at: target, tint: SKColor.white.withAlphaComponent(0.3))
+    }
+
+    func knockBall(id: UUID, to target: CGPoint) {
+        guard let node = ballNodes[id] else { return }
+        knock(node: node, to: target)
+    }
+
+    func knockCochonnet(to target: CGPoint) {
+        guard let node = cochonnetNode else { return }
+        knock(node: node, to: target)
+    }
+
+    private func shake() {
+        let amount: CGFloat = 6
+        let shake = SKAction.sequence([
+            SKAction.moveBy(x: amount, y: 0, duration: 0.03),
+            SKAction.moveBy(x: -amount * 2, y: 0, duration: 0.05),
+            SKAction.moveBy(x: amount, y: 0, duration: 0.03),
+        ])
+        run(shake)
     }
 
     private func makeBallNode(team: Team) -> SKNode {
@@ -162,9 +196,15 @@ final class PetancaScene: SKScene {
         return container
     }
 
-    private func animateThrow(node: SKNode, to target: CGPoint, completion: @escaping () -> Void) {
+    private func animateThrow(node: SKNode, to target: CGPoint, isShot: Bool, completion: @escaping () -> Void) {
         let distance = hypot(target.x - node.position.x, target.y - node.position.y)
-        let duration = min(1.1, max(0.45, TimeInterval(distance) / 420.0))
+        // A "shot" (tirer) is a flat, fast, direct throw — official petanque
+        // describes it as landing with little to no roll, unlike the high,
+        // gentle arc of a "point" throw. Shorter duration and a much
+        // smaller arc bump sell that difference without new assets.
+        let baseDuration = min(1.1, max(0.45, TimeInterval(distance) / 420.0))
+        let duration = isShot ? baseDuration * 0.55 : baseDuration
+        let arcPeak: CGFloat = isShot ? 1.08 : 1.35
 
         let appear = SKAction.group([
             SKAction.fadeIn(withDuration: 0.15),
@@ -173,16 +213,16 @@ final class PetancaScene: SKScene {
 
         // A gentle "lift" via a scale bump partway through sells an arc
         // without needing a true 3D trajectory.
-        let riseScale = SKAction.scale(to: 1.35, duration: duration * 0.45)
+        let riseScale = SKAction.scale(to: arcPeak, duration: duration * 0.45)
         riseScale.timingMode = .easeOut
         let fallScale = SKAction.scale(to: 1.0, duration: duration * 0.55)
         fallScale.timingMode = .easeIn
         let arcScale = SKAction.sequence([riseScale, fallScale])
 
         let move = SKAction.move(to: target, duration: duration)
-        move.timingMode = .easeOut
+        move.timingMode = isShot ? .linear : .easeOut
 
-        let spin = SKAction.rotate(byAngle: .pi * 4, duration: duration)
+        let spin = SKAction.rotate(byAngle: .pi * (isShot ? 6 : 4), duration: duration)
 
         let bounce = SKAction.sequence([
             SKAction.scale(to: 1.12, duration: 0.08),

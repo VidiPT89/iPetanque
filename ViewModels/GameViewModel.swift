@@ -33,7 +33,16 @@ final class GameViewModel: ObservableObject {
     /// same coordinate space. The initial value is only a placeholder used
     /// for the very first frame before layout happens.
     var fieldSize = CGSize(width: 340, height: 760)
-    let targetScore = 13
+    @Published var targetScore = 13
+
+    /// A throw past this normalized power (0...1, see `humanThrow(toward:power:)`)
+    /// is treated as a "shot" (tirer) instead of a soft "point" throw: on
+    /// landing it knocks any ball within `shotImpactRadius` away, mirroring
+    /// the two throw styles from official petanque instead of a full rigid
+    /// body physics simulation.
+    private let shotPowerThreshold: CGFloat = 0.62
+    private let shotImpactRadius: CGFloat = 30
+    private var shotBallIDs: Set<UUID> = []
 
     private var ballsThrown: [Team: Int] = [.teamA: 0, .teamB: 0]
     private var measurementWorkItem: DispatchWorkItem?
@@ -50,9 +59,10 @@ final class GameViewModel: ObservableObject {
 
     var ballsRemaining: Int { mode.playersPerTeam * mode.ballsPerPlayer }
 
-    func startNewGame(mode: GameMode, difficulty: Difficulty) {
+    func startNewGame(mode: GameMode, difficulty: Difficulty, targetScore: Int) {
         self.mode = mode
         self.difficulty = difficulty
+        self.targetScore = targetScore
         teamAScore = 0
         teamBScore = 0
         winner = nil
@@ -69,6 +79,7 @@ final class GameViewModel: ObservableObject {
         phase = newPhase
         history = []
         measurement = nil
+        shotBallIDs.removeAll()
     }
 
     func confirmCoinToss() {
@@ -79,11 +90,13 @@ final class GameViewModel: ObservableObject {
     // MARK: - Throw entry points
 
     /// Human-initiated throw from a drag gesture. `aim` is already clamped
-    /// to the field's coordinate space by the caller.
-    func humanThrow(toward aim: CGPoint) {
+    /// to the field's coordinate space by the caller. `power` is the drag
+    /// distance normalized 0...1 (see `GameView`) — a long, fast pull past
+    /// `shotPowerThreshold` throws a "shot" instead of a soft "point".
+    func humanThrow(toward aim: CGPoint, power: CGFloat) {
         guard currentTeam.isHuman else { return }
-        soundManager?.haptic(.light)
-        performThrow(target: aim)
+        soundManager?.haptic(power > shotPowerThreshold ? .heavy : .light)
+        performThrow(target: aim, isShot: power > shotPowerThreshold)
     }
 
     private func triggerAITurnIfNeeded() {
@@ -101,19 +114,27 @@ final class GameViewModel: ObservableObject {
                     .min { a, b in
                         guard let c = self.cochonnet?.position else { return false }
                         return a.distance(to: c) < b.distance(to: c)
-                    }?.position
+                    }
                 target = AIOpponent.chooseTarget(
                     cochonnet: self.cochonnet?.position ?? CGPoint(x: self.fieldSize.width / 2, y: self.fieldSize.height * 0.7),
-                    opponentClosestBall: opponentClosest,
+                    opponentClosestBall: opponentClosest?.position,
                     difficulty: self.difficulty,
                     fieldSize: self.fieldSize
                 )
+                // A shot at the opponent's boule only reads as intentional
+                // when the AI actually aimed close to it.
+                aiIsShootingNext = opponentClosest != nil
+                    && hypot(target.x - opponentClosest!.position.x, target.y - opponentClosest!.position.y) < self.shotImpactRadius * 2
             }
-            self.performThrow(target: target)
+            let isShot = self.phase == .throwBall && self.aiIsShootingNext
+            self.aiIsShootingNext = false
+            self.performThrow(target: target, isShot: isShot)
         }
     }
 
-    private func performThrow(target: CGPoint) {
+    private var aiIsShootingNext = false
+
+    private func performThrow(target: CGPoint, isShot: Bool) {
         guard let scene else { return }
         soundManager?.playThrow()
         measurement = nil
@@ -126,11 +147,12 @@ final class GameViewModel: ObservableObject {
 
         let ball = Ball(team: currentTeam, position: .zero)
         history.append(.ball(id: ball.id, team: currentTeam))
+        if isShot { shotBallIDs.insert(ball.id) }
         balls.append(ball)
         _ = scene.addBallStart(id: ball.id, team: currentTeam)
         // Let the scene lay out the start frame before animating.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.02) {
-            scene.throwBall(id: ball.id, to: target)
+            scene.throwBall(id: ball.id, to: target, isShot: isShot)
         }
     }
 
@@ -184,7 +206,10 @@ final class GameViewModel: ObservableObject {
         balls[index].isThrown = true
         ballsThrown[balls[index].team, default: 0] += 1
 
-        if isNearAnotherBall(point, excluding: id) {
+        let wasShot = shotBallIDs.remove(id) != nil
+        if wasShot {
+            applyShotImpact(at: point, excluding: id)
+        } else if isNearAnotherBall(point, excluding: id) {
             soundManager?.playCollision()
         }
 
@@ -194,6 +219,50 @@ final class GameViewModel: ObservableObject {
     private func isNearAnotherBall(_ point: CGPoint, excluding id: UUID) -> Bool {
         balls.contains { other in
             other.id != id && other.isThrown && hypot(other.position.x - point.x, other.position.y - point.y) < 22
+        }
+    }
+
+    /// A "shot" (tirer) throw: any boule — or the cochonnet itself — caught
+    /// within `shotImpactRadius` of the landing point gets knocked further
+    /// away along the same line, instead of just sitting where it lands
+    /// like a soft "point" throw. This is a lightweight stand-in for real
+    /// rigid-body collision physics, keeping landing positions (and so
+    /// scoring) fully deterministic.
+    private func applyShotImpact(at landingPoint: CGPoint, excluding id: UUID) {
+        var hitAnything = false
+        let pushDistance: CGFloat = 42
+
+        func pushed(_ position: CGPoint) -> CGPoint {
+            let dx = position.x - landingPoint.x
+            let dy = position.y - landingPoint.y
+            let distance = max(hypot(dx, dy), 1)
+            let x = position.x + dx / distance * pushDistance
+            let y = position.y + dy / distance * pushDistance
+            return CGPoint(
+                x: min(max(x, fieldSize.width * 0.06), fieldSize.width * 0.94),
+                y: min(max(y, fieldSize.height * 0.06), fieldSize.height * 0.9)
+            )
+        }
+
+        for index in balls.indices {
+            guard balls[index].id != id, balls[index].isThrown else { continue }
+            guard balls[index].distance(to: landingPoint) < shotImpactRadius else { continue }
+            let newPosition = pushed(balls[index].position)
+            balls[index].position = newPosition
+            scene?.knockBall(id: balls[index].id, to: newPosition)
+            hitAnything = true
+        }
+
+        if let cochonnet, cochonnet.distance(to: landingPoint) < shotImpactRadius {
+            let newPosition = pushed(cochonnet.position)
+            self.cochonnet = Cochonnet(position: newPosition)
+            scene?.knockCochonnet(to: newPosition)
+            hitAnything = true
+        }
+
+        if hitAnything {
+            soundManager?.playCollision()
+            soundManager?.haptic(.heavy)
         }
     }
 

@@ -3,10 +3,11 @@ import SwiftUI
 struct NewGameView: View {
     @EnvironmentObject var languageManager: LanguageManager
     var onBack: () -> Void
-    var onStart: (GameMode, Difficulty) -> Void
+    var onStart: (GameMode, Difficulty, Int) -> Void
 
     @State private var selectedMode: GameMode = .singles
     @AppStorage("difficulty") private var difficultyRaw = Difficulty.medium.rawValue
+    @AppStorage("targetScore") private var targetScore = 13
 
     private var selectedDifficulty: Binding<Difficulty> {
         Binding(
@@ -47,8 +48,19 @@ struct NewGameView: View {
                         .pickerStyle(.segmented)
                     }
 
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text(languageManager.t(.targetScoreLabel))
+                            .font(.system(size: 18, weight: .semibold, design: .rounded))
+                        Picker("", selection: $targetScore) {
+                            Text("6").tag(6)
+                            Text("11").tag(11)
+                            Text("13").tag(13)
+                        }
+                        .pickerStyle(.segmented)
+                    }
+
                     Button {
-                        onStart(selectedMode, selectedDifficulty.wrappedValue)
+                        onStart(selectedMode, selectedDifficulty.wrappedValue, targetScore)
                     } label: {
                         Text(languageManager.t(.start))
                             .font(.system(size: 18, weight: .bold, design: .rounded))

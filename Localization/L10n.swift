@@ -22,6 +22,7 @@ enum L10nKey: String {
     case dragToAim
     case ballsRemaining, cochonnet
     case start
+    case shotMode, targetScoreLabel
 }
 
 enum L10n {
@@ -77,6 +78,8 @@ enum L10n {
         .ballsRemaining: "Bolas restantes",
         .cochonnet: "Cochonnet",
         .start: "Começar",
+        .shotMode: "TIRAR",
+        .targetScoreLabel: "Pontuação Alvo",
     ]
 
     private static let en: [L10nKey: String] = [
@@ -131,6 +134,8 @@ enum L10n {
         .ballsRemaining: "Balls remaining",
         .cochonnet: "Cochonnet",
         .start: "Start",
+        .shotMode: "SHOT",
+        .targetScoreLabel: "Target Score",
     ]
 
     static func string(_ key: L10nKey, language: AppLanguage) -> String {

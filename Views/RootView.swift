@@ -31,8 +31,8 @@ struct RootView: View {
             case .newGame:
                 NewGameView(
                     onBack: { withAnimation { screen = .menu } },
-                    onStart: { mode, difficulty in
-                        gameViewModel.startNewGame(mode: mode, difficulty: difficulty)
+                    onStart: { mode, difficulty, targetScore in
+                        gameViewModel.startNewGame(mode: mode, difficulty: difficulty, targetScore: targetScore)
                         withAnimation { screen = .game }
                     }
                 )
