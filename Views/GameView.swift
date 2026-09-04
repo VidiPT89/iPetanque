@@ -32,36 +32,49 @@ struct GameView: View {
     @GestureState private var dragTarget: CGPoint?
 
     var body: some View {
-        ZStack {
-            fieldLayer
+        GeometryReader { rootGeo in
+            ZStack {
+                fieldLayer
 
-            VStack {
-                topBar
-                Spacer()
-                bottomBar
-            }
-            .padding(.top, 8)
-            .padding(.bottom, 20)
+                VStack {
+                    topBar
+                    Spacer()
+                    bottomBar
+                }
+                .padding(.top, 8)
+                .padding(.bottom, 20)
 
-            if viewModel.phase == .coinToss {
-                coinTossOverlay
-            }
+                if viewModel.phase == .coinToss {
+                    coinTossOverlay
+                }
 
-            if viewModel.phase == .endOfEnd {
-                endOfEndOverlay
-            }
+                if viewModel.phase == .endOfEnd {
+                    endOfEndOverlay
+                }
 
-            if viewModel.phase == .gameOver {
-                gameOverOverlay
-            }
+                if viewModel.phase == .gameOver {
+                    gameOverOverlay
+                }
 
-            if let unlocked = statsManager.justUnlocked {
-                achievementToast(unlocked)
+                if let unlocked = statsManager.justUnlocked {
+                    achievementToast(unlocked)
+                }
             }
+            .onAppear { viewModel.soundManager = soundManager }
+            // Each bar's own measured height only covers its own content —
+            // the bars don't `.ignoresSafeArea()`, so SwiftUI implicitly
+            // pushes them below the status bar/Dynamic Island, but that
+            // pushed-down space itself is invisible to a plain `.background`
+            // `GeometryReader` (its `size` is local content size only). Add
+            // `rootGeo.safeAreaInsets`, measured once from the full-screen
+            // `GeometryReader` this whole body is wrapped in, to get the
+            // real total distance from each screen edge — otherwise a boule
+            // clamped by `clampY` lands underneath the status bar on any
+            // notched/Dynamic Island device, matching a real bug report
+            // (2026-09-04, iPhone 17 Pro Max).
+            .onPreferenceChange(TopBarHeightKey.self) { viewModel.topSafeInset = $0 + rootGeo.safeAreaInsets.top + 8 + 16 }
+            .onPreferenceChange(BottomBarHeightKey.self) { viewModel.bottomSafeInset = $0 + rootGeo.safeAreaInsets.bottom + 20 + 16 }
         }
-        .onAppear { viewModel.soundManager = soundManager }
-        .onPreferenceChange(TopBarHeightKey.self) { viewModel.topSafeInset = $0 + 16 }
-        .onPreferenceChange(BottomBarHeightKey.self) { viewModel.bottomSafeInset = $0 + 36 }
         .background(Color.black.ignoresSafeArea())
     }
 

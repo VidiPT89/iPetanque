@@ -15,7 +15,12 @@ enum AIOpponent {
         let aimAtOpponent = difficulty == .hard && opponentClosestBall != nil && Bool.random(probability: 0.35)
         let aim = aimAtOpponent ? opponentClosestBall! : cochonnet
 
-        let maxScatter = fieldSize.width * (1.0 - difficulty.accuracy) * 0.35
+        // A floor on scatter keeps consecutive throws (especially at high
+        // accuracy) from landing near-identically — with almost no scatter,
+        // 2-3 overlapping boules get shoved into an unnaturally tidy,
+        // perfectly touching row by the physics engine's passive overlap
+        // resolution, which reads as a bug rather than a good AI throw.
+        let maxScatter = max(fieldSize.width * (1.0 - difficulty.accuracy) * 0.35, 20)
         let scatterX = CGFloat.random(in: -maxScatter...maxScatter)
         let scatterY = CGFloat.random(in: -maxScatter...maxScatter)
 
