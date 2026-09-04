@@ -21,6 +21,7 @@ private struct BottomBarHeightKey: PreferenceKey {
 struct GameView: View {
     @EnvironmentObject var languageManager: LanguageManager
     @EnvironmentObject var soundManager: SoundManager
+    @EnvironmentObject var statsManager: StatsManager
     @ObservedObject var viewModel: GameViewModel
     var onExit: () -> Void
 
@@ -52,6 +53,10 @@ struct GameView: View {
 
             if viewModel.phase == .gameOver {
                 gameOverOverlay
+            }
+
+            if let unlocked = statsManager.justUnlocked {
+                achievementToast(unlocked)
             }
         }
         .onAppear { viewModel.soundManager = soundManager }
@@ -321,6 +326,46 @@ struct GameView: View {
                 CelebrationParticles()
             }
         }
+    }
+
+    /// A short-lived toast for `StatsManager.justUnlocked` — previously that
+    /// flag was set on every unlock but nothing ever displayed it, so
+    /// achievements unlocked completely silently. Auto-dismisses itself
+    /// after 2.5s, and only clears the flag if it's still the same
+    /// achievement (a second one unlocking in that window replaces it
+    /// instead of being clobbered by the first toast's dismiss timer).
+    private func achievementToast(_ achievement: AchievementID) -> some View {
+        VStack {
+            HStack(spacing: 12) {
+                Image(systemName: achievement.icon)
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(.white)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(languageManager.t(.unlocked))
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.75))
+                    Text(languageManager.t(achievement.titleKey))
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(LinearGradient(colors: [Color("PrimaryOrange"), Color("BurntYellow")], startPoint: .leading, endPoint: .trailing))
+            .clipShape(Capsule())
+            .shadow(color: .black.opacity(0.3), radius: 10, y: 4)
+            .padding(.top, 4)
+            Spacer()
+        }
+        .transition(.move(edge: .top).combined(with: .opacity))
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                if statsManager.justUnlocked == achievement {
+                    withAnimation { statsManager.justUnlocked = nil }
+                }
+            }
+        }
+        .allowsHitTesting(false)
     }
 
     private func overlayBackground<Content: View>(@ViewBuilder content: () -> Content) -> some View {

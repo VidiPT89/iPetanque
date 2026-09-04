@@ -57,7 +57,6 @@ final class PetancaScene: SKScene {
         physicsWorld.gravity = .zero
     }
 
-    private var groundNode: SKSpriteNode?
     private var courtNode: SKShapeNode?
 
     private func setupField(topInset: CGFloat, bottomInset: CGFloat) {
@@ -68,7 +67,6 @@ final class PetancaScene: SKScene {
         ground.size = size
         ground.zPosition = -10
         addChild(ground)
-        groundNode = ground
 
         let court = SKShapeNode()
         court.strokeColor = SKColor.white.withAlphaComponent(0.16)
