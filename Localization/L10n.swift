@@ -7,14 +7,14 @@ enum L10nKey: String {
     case language, theme, darkMode, lightMode, systemMode
     case developedBy
     case yourTurn, opponentTurn, teamTurn
-    case menu, rules, difficulty, easy, medium, hard
+    case menu, difficulty, easy, medium, hard
     case sound
     case victory, defeat, playAgain, backToMenu
     case undo, measureDistance
     case singles, doubles, triples
     case selectMode, selectModeSubtitle
     case teamA, teamB
-    case coinToss, coinTossResult
+    case coinToss
     case endOfEnd, endOfEndSubtitle, continueButton
     case aboutDescription, aboutRulesTitle
     case rule1, rule2, rule3, rule4
@@ -25,7 +25,7 @@ enum L10nKey: String {
     case shotMode, targetScoreLabel
     case terrain, terrainGrass, terrainHardDirt, terrainGravel
     case achievements, statistics
-    case gamesPlayed, gamesWon, winRate, shotsTaken, pointsTaken, perfectShot
+    case gamesPlayed, gamesWon, winRate, shotsTaken, pointsTaken
     case achievementFirstWin, achievementFirstWinDesc
     case achievementShutout, achievementShutoutDesc
     case achievementStreak5, achievementStreak5Desc
@@ -54,7 +54,6 @@ enum L10n {
         .opponentTurn: "Turno do adversário",
         .teamTurn: "Turno da equipa %@",
         .menu: "Menu",
-        .rules: "Regras",
         .difficulty: "Dificuldade",
         .easy: "Fácil",
         .medium: "Médio",
@@ -74,7 +73,6 @@ enum L10n {
         .teamA: "Equipa A",
         .teamB: "Equipa B",
         .coinToss: "A sortear quem começa...",
-        .coinTossResult: "%@ começa!",
         .endOfEnd: "Fim da Mene",
         .endOfEndSubtitle: "%@ marcou %d ponto(s)",
         .continueButton: "Continuar",
@@ -103,7 +101,6 @@ enum L10n {
         .winRate: "% Vitórias",
         .shotsTaken: "Tiradas",
         .pointsTaken: "Apontadas",
-        .perfectShot: "Carreau Perfeito",
         .achievementFirstWin: "Primeira Vitória",
         .achievementFirstWinDesc: "Ganha o teu primeiro jogo",
         .achievementShutout: "Vitória Impecável",
@@ -146,7 +143,6 @@ enum L10n {
         .opponentTurn: "Opponent's turn",
         .teamTurn: "Team %@'s turn",
         .menu: "Menu",
-        .rules: "Rules",
         .difficulty: "Difficulty",
         .easy: "Easy",
         .medium: "Medium",
@@ -166,7 +162,6 @@ enum L10n {
         .teamA: "Team A",
         .teamB: "Team B",
         .coinToss: "Tossing to see who starts...",
-        .coinTossResult: "%@ starts!",
         .endOfEnd: "End of Round",
         .endOfEndSubtitle: "%@ scored %d point(s)",
         .continueButton: "Continue",
@@ -195,7 +190,6 @@ enum L10n {
         .winRate: "Win Rate",
         .shotsTaken: "Shots",
         .pointsTaken: "Points",
-        .perfectShot: "Perfect Carreau",
         .achievementFirstWin: "First Win",
         .achievementFirstWinDesc: "Win your first game",
         .achievementShutout: "Flawless Victory",
