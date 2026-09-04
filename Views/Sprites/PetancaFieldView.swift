@@ -27,7 +27,7 @@ struct PetancaFieldView: UIViewRepresentable {
         guard let scene = uiView.scene as? PetancaScene else { return }
         scene.terrain = viewModel.terrain
         scene.ballAccent = viewModel.ballAccent
-        scene.syncField(size: uiView.bounds.size)
+        scene.syncField(size: uiView.bounds.size, topInset: viewModel.topSafeInset, bottomInset: viewModel.bottomSafeInset)
         if viewModel.fieldSize != uiView.bounds.size, uiView.bounds.width > 0, uiView.bounds.height > 0 {
             viewModel.fieldSize = uiView.bounds.size
         }

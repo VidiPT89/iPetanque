@@ -31,6 +31,14 @@ final class PetancaScene: SKScene {
     private var cochonnetNode: SKNode?
     private let circleMarker = SKShapeNode(circleOfRadius: 18)
 
+    /// The actual playable rectangle, inset from the full-screen `size` by
+    /// whatever the real top/bottom UI chrome measures (see `syncField`).
+    /// Every static layout position (circle, ball/cochonnet start points)
+    /// and the physics wall are derived from this, never from raw
+    /// fractions of the full `size` — that was the bug: a boule could land
+    /// underneath the score/HUD bar, hidden and unreachable.
+    private var courtRect: CGRect = .zero
+
     /// Tracked independently from `size`: with `scaleMode = .resizeFill`,
     /// SpriteKit silently mutates `size` on its own render loop whenever the
     /// view's bounds change, ahead of our own `syncField` call. Comparing
@@ -41,6 +49,7 @@ final class PetancaScene: SKScene {
     /// circle positioned for whatever tiny frame the view had before
     /// SwiftUI finished its first real layout pass.
     private var lastLayoutSize: CGSize = .zero
+    private var lastLayoutInsets: (top: CGFloat, bottom: CGFloat) = (0, 0)
 
     override func didMove(to view: SKView) {
         backgroundColor = SKColor(red: 0.22, green: 0.16, blue: 0.10, alpha: 1.0)
@@ -48,7 +57,10 @@ final class PetancaScene: SKScene {
         physicsWorld.gravity = .zero
     }
 
-    private func setupField() {
+    private var groundNode: SKSpriteNode?
+    private var courtNode: SKShapeNode?
+
+    private func setupField(topInset: CGFloat, bottomInset: CGFloat) {
         guard size.width > 0, size.height > 0 else { return }
 
         let ground = SKSpriteNode(texture: SKTexture(image: PetancaTextures.groundTexture(size: size, terrain: terrain)))
@@ -56,24 +68,16 @@ final class PetancaScene: SKScene {
         ground.size = size
         ground.zPosition = -10
         addChild(ground)
+        groundNode = ground
 
-        // Court boundary, inset slightly from the screen edges, echoing the
-        // real 4m x 15m rectangle. Also a real physics wall, so a hard shot
-        // can't send a boule flying off past the visible field.
-        let inset: CGFloat = 14
-        let courtRect = CGRect(x: inset, y: inset, width: size.width - inset * 2, height: size.height - inset * 2)
-        let court = SKShapeNode(rect: courtRect, cornerRadius: 6)
-        court.position = .zero
-        court.strokeColor = SKColor.white.withAlphaComponent(0.14)
+        let court = SKShapeNode()
+        court.strokeColor = SKColor.white.withAlphaComponent(0.16)
         court.lineWidth = 1.5
         court.fillColor = .clear
         court.zPosition = -8
-        court.physicsBody = SKPhysicsBody(edgeLoopFrom: courtRect)
-        court.physicsBody?.categoryBitMask = PhysicsCategory.wall
-        court.physicsBody?.friction = 0.3
         addChild(court)
+        courtNode = court
 
-        circleMarker.position = CGPoint(x: size.width / 2, y: size.height * 0.08)
         circleMarker.strokeColor = SKColor(red: 1, green: 0.42, blue: 0.21, alpha: 0.85)
         circleMarker.lineWidth = 3
         circleMarker.fillColor = .clear
@@ -87,16 +91,59 @@ final class PetancaScene: SKScene {
         ])
         circleMarker.setScale(1.0)
         circleMarker.run(SKAction.repeatForever(pulse))
+
+        repositionCourt(topInset: topInset, bottomInset: bottomInset)
     }
 
-    func syncField(size newSize: CGSize) {
-        guard newSize.width > 0, newSize.height > 0, newSize != lastLayoutSize else { return }
-        lastLayoutSize = newSize
-        size = newSize
-        removeAllChildren()
-        ballNodes.removeAll()
-        cochonnetNode = nil
-        setupField()
+    /// Updates the court boundary (visual + physics wall) and the throwing
+    /// circle to match the current safe insets, *without* touching any
+    /// already-thrown boule or the cochonnet. Splitting this out from
+    /// `setupField` fixed a real bug: insets settle a frame or two after
+    /// `GeometryReader` first measures the UI chrome in `GameView`, and
+    /// reacting to that by rebuilding the whole scene (`removeAllChildren`)
+    /// — as this used to do — wiped every boule already on the board mid
+    /// match. The ball/score counters stayed correct (they live in the
+    /// view model), but the boules simply vanished from the screen.
+    private func repositionCourt(topInset: CGFloat, bottomInset: CGFloat) {
+        let sideInset: CGFloat = 14
+        let rect = CGRect(
+            x: sideInset,
+            y: bottomInset,
+            width: size.width - sideInset * 2,
+            height: max(40, size.height - topInset - bottomInset)
+        )
+        courtRect = rect
+        courtNode?.path = CGPath(roundedRect: rect, cornerWidth: 6, cornerHeight: 6, transform: nil)
+        let wall = SKPhysicsBody(edgeLoopFrom: rect)
+        wall.categoryBitMask = PhysicsCategory.wall
+        wall.friction = 0.3
+        courtNode?.physicsBody = wall
+        circleMarker.position = CGPoint(x: size.width / 2, y: rect.minY + 24)
+    }
+
+    func syncField(size newSize: CGSize, topInset: CGFloat, bottomInset: CGFloat) {
+        // Round to whole points: `GeometryReader` can report the same
+        // logical height as e.g. 101.99999999999999 vs 102.0 across
+        // renders (floating-point noise from the layout pass), which would
+        // otherwise be seen as "insets changed" on every single frame.
+        let roundedTop = topInset.rounded()
+        let roundedBottom = bottomInset.rounded()
+        let sizeChanged = newSize.width > 0 && newSize.height > 0 && newSize != lastLayoutSize
+        let insetsChanged = roundedTop != lastLayoutInsets.top || roundedBottom != lastLayoutInsets.bottom
+        guard sizeChanged || insetsChanged else { return }
+
+        if sizeChanged {
+            lastLayoutSize = newSize
+            size = newSize
+            removeAllChildren()
+            ballNodes.removeAll()
+            cochonnetNode = nil
+            lastLayoutInsets = (roundedTop, roundedBottom)
+            setupField(topInset: roundedTop, bottomInset: roundedBottom)
+        } else {
+            lastLayoutInsets = (roundedTop, roundedBottom)
+            repositionCourt(topInset: roundedTop, bottomInset: roundedBottom)
+        }
     }
 
     // MARK: - Cochonnet
@@ -105,7 +152,7 @@ final class PetancaScene: SKScene {
         let node = SKSpriteNode(texture: SKTexture(image: PetancaTextures.cochonnetTexture()))
         node.size = CGSize(width: 16, height: 16)
         node.zPosition = 5
-        node.position = CGPoint(x: size.width / 2, y: size.height * 0.12)
+        node.position = CGPoint(x: size.width / 2, y: courtRect.minY + 40)
         node.setScale(0.4)
         node.alpha = 0
         addChild(node)
@@ -147,7 +194,7 @@ final class PetancaScene: SKScene {
 
     func addBallStart(id: UUID, team: Team) -> CGPoint {
         let startX = team == .teamA ? size.width * 0.28 : size.width * 0.72
-        let start = CGPoint(x: startX, y: size.height * 0.06)
+        let start = CGPoint(x: startX, y: max(courtRect.minY + 18, 18))
         let node = makeBallNode(team: team)
         node.position = start
         node.setScale(0.4)

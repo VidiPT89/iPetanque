@@ -56,6 +56,39 @@ final class GameViewModel: ObservableObject {
     var fieldSize = CGSize(width: 340, height: 760)
     @Published var targetScore = 13
 
+    /// How much of the screen, at the top and bottom, is actually covered
+    /// by fixed SwiftUI chrome (score/HUD bar, turn indicator/controls) —
+    /// measured for real from `GameView` via `GeometryReader`/`PreferenceKey`,
+    /// not guessed. Every throw target (human or AI) is clamped to stay
+    /// outside these strips, and `PetancaScene` draws the court boundary to
+    /// match exactly, so a boule can never land somewhere the player can't
+    /// see or reach — see `clampY`.
+    ///
+    /// Deliberately NOT `@Published`: `GameView` sets these from
+    /// `onPreferenceChange`, which fires on every layout pass of the bars
+    /// being measured. If this were `@Published`, each assignment would
+    /// (even when the value is unchanged — `@Published` doesn't check
+    /// equality) trigger `objectWillChange`, re-rendering `GameView`,
+    /// re-measuring the same bars, re-firing the same preference, and
+    /// re-assigning again — an infinite render loop that saturates the
+    /// main thread and starves the AI's `DispatchQueue.main.asyncAfter`
+    /// turn timer (confirmed: with this `@Published`, the AI never threw
+    /// the cochonnet within a 2-minute test run). Every other place that
+    /// needs the current value (`clampY`, `PetancaFieldView.updateUIView`)
+    /// already runs on its own trigger, so no UI depends on this being
+    /// observable.
+    var topSafeInset: CGFloat = 110
+    var bottomSafeInset: CGFloat = 150
+
+    /// Clamps a y coordinate (SpriteKit's bottom-up field space) to the
+    /// visible, reachable strip between the bottom and top UI chrome.
+    func clampY(_ y: CGFloat) -> CGFloat {
+        let ballMargin: CGFloat = 16
+        let minY = bottomSafeInset + ballMargin
+        let maxY = max(minY, fieldSize.height - topSafeInset - ballMargin)
+        return min(max(y, minY), maxY)
+    }
+
     /// A throw past this normalized power (0...1, see `humanThrow(toward:power:)`)
     /// is treated as a "shot" (tirer): a real `SKPhysicsBody` impulse is
     /// applied on arrival instead of the boule simply resting where the
@@ -140,7 +173,8 @@ final class GameViewModel: ObservableObject {
         guard isHumanControlled(currentTeam) else { return }
         let isShot = power > shotPowerThreshold
         soundManager?.haptic(isShot ? .heavy : .light)
-        performThrow(target: aim, isShot: isShot, impulseMagnitude: 260 + power * 260, curve: isShot ? 0 : curve)
+        let clamped = CGPoint(x: aim.x, y: clampY(aim.y))
+        performThrow(target: clamped, isShot: isShot, impulseMagnitude: 260 + power * 260, curve: isShot ? 0 : curve)
     }
 
     private func triggerAITurnIfNeeded() {
@@ -171,7 +205,8 @@ final class GameViewModel: ObservableObject {
                 isShot = opponentClosest != nil
                     && hypot(target.x - opponentClosest!.position.x, target.y - opponentClosest!.position.y) < self.shotImpactRadius * 2
             }
-            self.performThrow(target: target, isShot: isShot, impulseMagnitude: 360 + self.difficulty.accuracy * 120, curve: 0)
+            let clampedTarget = CGPoint(x: target.x, y: self.clampY(target.y))
+            self.performThrow(target: clampedTarget, isShot: isShot, impulseMagnitude: 360 + self.difficulty.accuracy * 120, curve: 0)
         }
     }
 

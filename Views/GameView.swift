@@ -1,5 +1,23 @@
 import SwiftUI
 
+/// Reports the real, rendered height of a UI chrome bar (top/bottom) up the
+/// view tree, so the playable field can be inset to exactly avoid it —
+/// hardcoding a guessed point value would drift from the real UI on
+/// different devices/Dynamic Type sizes.
+private struct TopBarHeightKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
+    }
+}
+
+private struct BottomBarHeightKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
+    }
+}
+
 struct GameView: View {
     @EnvironmentObject var languageManager: LanguageManager
     @EnvironmentObject var soundManager: SoundManager
@@ -37,6 +55,8 @@ struct GameView: View {
             }
         }
         .onAppear { viewModel.soundManager = soundManager }
+        .onPreferenceChange(TopBarHeightKey.self) { viewModel.topSafeInset = $0 + 16 }
+        .onPreferenceChange(BottomBarHeightKey.self) { viewModel.bottomSafeInset = $0 + 36 }
         .background(Color.black.ignoresSafeArea())
     }
 
@@ -173,6 +193,11 @@ struct GameView: View {
             ballsRemainingRow
         }
         .padding(.horizontal, 16)
+        .background(
+            GeometryReader { geo in
+                Color.clear.preference(key: TopBarHeightKey.self, value: geo.size.height)
+            }
+        )
     }
 
     private var ballsRemainingRow: some View {
@@ -201,6 +226,11 @@ struct GameView: View {
             GameControlsView(viewModel: viewModel)
         }
         .padding(.horizontal, 16)
+        .background(
+            GeometryReader { geo in
+                Color.clear.preference(key: BottomBarHeightKey.self, value: geo.size.height)
+            }
+        )
     }
 
     private var coinTossOverlay: some View {
